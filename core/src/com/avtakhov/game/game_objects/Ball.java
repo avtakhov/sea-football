@@ -1,3 +1,4 @@
+
 package com.avtakhov.game.game_objects;
 
 import com.badlogic.gdx.graphics.Texture;
