@@ -20,22 +20,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 
-public class Menue implements Screen {
+public class Menu implements Screen {
     private Stage stage;
     private OrthographicCamera camera;
     MainShip main;
     RenderObject back;
     Button playButton;
 
-    public Menue(Game aGame) {
+    public Menu(Game aGame) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 2000, 1252);
         stage = new Stage();
         back = new RenderObject(new Texture("menu.jpg"));
         back.setBounds(0, 0, 2000, 1252);
         stage.addActor(back);
-
-        //stage.addActor(main);
         playButton = new Button(new Texture("img.png"));
         playButton.setBounds(back.getWidth() / 2 - 200, back.getHeight() / 20, 300, 200);
         stage.addActor(playButton);
@@ -72,7 +70,7 @@ public class Menue implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     }
 
     @Override

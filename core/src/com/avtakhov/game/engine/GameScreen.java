@@ -4,12 +4,14 @@ import com.avtakhov.game.game_objects.Ball;
 import com.avtakhov.game.game_objects.Bullet;
 import com.avtakhov.game.game_objects.MainShip;
 import com.avtakhov.game.game_objects.RenderObject;
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -40,8 +42,25 @@ public class GameScreen implements Screen {
         stage.addActor(ball);
     }
 
+    private long start = System.currentTimeMillis();
+
+    public void sleep(int fps) {
+        if (fps > 0) {
+            long diff = System.currentTimeMillis() - start;
+            long targetDelay = 1000 / fps;
+            if (diff < targetDelay) {
+                try {
+                    Thread.sleep(targetDelay - diff);
+                } catch (InterruptedException ignored) {
+                }
+            }
+            start = System.currentTimeMillis();
+        }
+    }
+
     @Override
     public void render(float delta) {
+        sleep(60);
         Gdx.gl.glClearColor(0.28f, 0.45f, 0.67f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
@@ -52,7 +71,7 @@ public class GameScreen implements Screen {
         batch.end();
 
         for (Actor e : stage.getActors()) {
-            if (!e.equals(back) && e instanceof RenderObject && ! (e instanceof Bullet)) {
+            if (!e.equals(back) && e instanceof RenderObject && !(e instanceof Bullet)) {
                 if (e instanceof Ball) {
                     checkBounds((Ball) e);
                     continue;
@@ -61,6 +80,7 @@ public class GameScreen implements Screen {
             }
             if (e instanceof Bullet) {
                 ball.collide((Bullet) e);
+                checkBounds(ball);
             }
         }
         moveShip();
@@ -114,6 +134,7 @@ public class GameScreen implements Screen {
             }
         }
     }
+
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);

@@ -1,6 +1,6 @@
 package com.avtakhov.game.desktop;
 
-import com.avtakhov.game.Menue;
+import com.avtakhov.game.Menu;
 import com.avtakhov.game.engine.GameScreen;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
@@ -12,7 +12,7 @@ public class MyGame extends Game {
 
 	@Override
 	public void create() {
-		this.setScreen(new Menue(this));
+		this.setScreen(new Menu(this));
 	}
 
 	public void render () {
