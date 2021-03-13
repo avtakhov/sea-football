@@ -23,6 +23,8 @@ public class Bullet extends RenderObject {
         super.act(time);
         float moveX = SPEED * (float) Math.cos(Math.toRadians(getRotation()));
         float moveY = SPEED * (float) Math.sin(Math.toRadians(getRotation()));
+        speedX = moveX;
+        speedY = moveY;
         setX(getX() + moveX);
         setY(getY() + moveY);
         currentDistance += (Math.abs(moveX) + Math.abs(moveY));
