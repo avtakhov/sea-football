@@ -25,7 +25,8 @@ public class Menu implements Screen, ScreenInterface {
     private static boolean isMusic = true;
     long idMusic;
     public Menu(Game aGame) {
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("fontmusic.mp3"));
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("ostrov_sokrovishc_02.mp3"));
+        sound.loop();
         idMusic = sound.play(1.0f); // play new sound and keep handle for further manipulation
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 2000, 1252);
