@@ -4,17 +4,16 @@ import com.avtakhov.game.game_objects.Ball;
 import com.avtakhov.game.game_objects.Bullet;
 import com.avtakhov.game.game_objects.MainShip;
 import com.avtakhov.game.game_objects.RenderObject;
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public class Game extends ApplicationAdapter {
+public class GameScreen implements Screen {
     private Stage stage;
     private OrthographicCamera camera;
 
@@ -22,8 +21,7 @@ public class Game extends ApplicationAdapter {
     RenderObject back;
     Ball ball;
 
-    @Override
-    public void create() {
+    public GameScreen(Game aGame) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
         stage = new Stage();
@@ -43,7 +41,7 @@ public class Game extends ApplicationAdapter {
     }
 
     @Override
-    public void render() {
+    public void render(float delta) {
         Gdx.gl.glClearColor(0.28f, 0.45f, 0.67f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
@@ -116,7 +114,30 @@ public class Game extends ApplicationAdapter {
             }
         }
     }
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+    }
 
+    @Override
+    public void resize(int width, int height) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 
     @Override
     public void dispose() {
