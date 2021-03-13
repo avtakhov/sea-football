@@ -16,15 +16,17 @@ public class MainShip extends RenderObject {
         super(new Sprite(img));
         this.camera = camera;
     }
-
+    @Override
     public void move() {
-        setX(getX() + SPEED * (float) Math.cos(Math.toRadians(getRotation())));
-        setY(getY() + SPEED * (float) Math.sin(Math.toRadians(getRotation())));
+        setX(getX() + speedX);
+        setY(getY() + speedY);
     }
 
     @Override
     public void act(float time) {
         super.act(time);
+        speedX = SPEED * (float) Math.cos(Math.toRadians(getRotation()));
+        speedY = SPEED * (float) Math.sin(Math.toRadians(getRotation()));
         move();
     }
 
@@ -38,7 +40,6 @@ public class MainShip extends RenderObject {
         super.setY(y);
         camera.position.y = y + getHeight() / 2;
     }
-
 
     @Override
     public void setBounds(float x, float y, float w, float h) {
