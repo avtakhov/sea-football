@@ -14,6 +14,5 @@ public class BotShip extends Ship {
     public BotShip(Texture img, Ball ball) {
         super(img);
         this.ball = ball;
-
     }
 }

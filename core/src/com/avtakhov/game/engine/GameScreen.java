@@ -40,13 +40,13 @@ public class GameScreen implements Screen {
         bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
         back.setBounds(0, 0, 2000, 1252);
         RenderObject backBack = new RenderObject(new Texture("back_back.png"));
-        backBack.setBounds(-1000, -1000, 4000, 4000);
+        backBack.setBounds(0, 0, 4000, 4000);
         stage.addActor(backBack);
         stage.addActor(back);
         stage.addActor(main);
         stage.addActor(bot);
         arrow = new RenderObject(new Texture("arrow.png"));
-        arrow.setBounds(main.getCenterX(), main.getCenterY(), 32, 32);
+        arrow.setBounds(main.getX(), main.getY(), 32, 32);
         stage.addActor(arrow);
         stage.addActor(ball);
     }
@@ -103,7 +103,7 @@ public class GameScreen implements Screen {
 
     private void moveBotShip() {
         checkBounds(bot);
-        if (ball.getCenterX() < bot.getCenterX()) {
+        if (ball.getX() < bot.getX()) {
             if (bot.getSpeedX() > 0) {
                 bot.rotateBy(-1);
             }
@@ -138,11 +138,11 @@ public class GameScreen implements Screen {
     }
 
     private void moveArrow() {
-        double dist = Math.sqrt(Math.pow(ball.getCenterX() - main.getCenterX(), 2) + Math.pow(ball.getCenterY() - main.getCenterY(), 2));
-        double cos = (ball.getCenterX() - main.getCenterX()) / dist;
-        double sin = (ball.getCenterY() - main.getCenterY()) / dist;
-        arrow.setPosition((float) (main.getCenterX() + cos * main.getHeight()),
-                (float) (main.getCenterY() + sin * main.getHeight()));
+        double dist = Math.sqrt(Math.pow(ball.getX() - main.getX(), 2) + Math.pow(ball.getY() - main.getY(), 2));
+        double cos = (ball.getX() - main.getX()) / dist;
+        double sin = (ball.getY() - main.getY()) / dist;
+        arrow.setPosition((float) (main.getX() + cos * main.getHeight() * 2),
+                (float) (main.getY()  + sin * main.getHeight() * 2));
         float degrees = (float) Math.toDegrees(Math.acos(cos));
         if (sin < 0) {
             degrees *= -1;
@@ -152,14 +152,14 @@ public class GameScreen implements Screen {
 
     private void createBullet(float rotation, Ship ship) {
         Bullet bullet = new Bullet(new Texture("bullet1.png"));
-        bullet.setBounds(ship.getX() + ship.getWidth() / 2, ship.getY() + ship.getHeight() / 2, 10, 10);
+        bullet.setBounds(ship.getX(), ship.getY(), 10, 10);
         bullet.setRotation(ship.getRotation() + rotation);
         stage.addActor(bullet);
     }
 
     private void checkBounds(RenderObject object) {
-        float newX = object.getCenterX() + object.getSpeedX();
-        float newY = object.getCenterY() + object.getSpeedY();
+        float newX = object.getX() + object.getSpeedX();
+        float newY = object.getY() + object.getSpeedY();
         if (newX >= back.getWidth() || newX <= 0 || newY >= back.getHeight() || newY <= 0) {
             object.setX(object.getX() - object.getSpeedX());
             object.setY(object.getY() - object.getSpeedY());
@@ -167,8 +167,8 @@ public class GameScreen implements Screen {
     }
 
     private void checkBounds(Ball object) {
-        float newX = object.getCenterX() + object.getSpeedX();
-        float newY = object.getCenterY() + object.getSpeedY();
+        float newX = object.getX() + object.getSpeedX();
+        float newY = object.getY() + object.getSpeedY();
         if (newX >= back.getWidth() || newX <= 0 || newY >= back.getHeight() || newY <= 0) {
             if (newX >= back.getWidth() || newX <= 0) {
                 object.setSpeedX(-object.getSpeedX() / 2);
