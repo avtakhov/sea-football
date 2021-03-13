@@ -4,10 +4,7 @@ import com.avtakhov.game.game_objects.Ball;
 import com.avtakhov.game.game_objects.Bullet;
 import com.avtakhov.game.game_objects.MainShip;
 import com.avtakhov.game.game_objects.RenderObject;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,6 +19,7 @@ public class GameScreen implements Screen {
     MainShip main;
     RenderObject back;
     Ball ball;
+    RenderObject arrow;
 
     public GameScreen(Game aGame) {
         camera = new OrthographicCamera();
@@ -36,9 +34,11 @@ public class GameScreen implements Screen {
         stage.addActor(backBack);
         stage.addActor(back);
         stage.addActor(main);
+        arrow = new RenderObject(new Texture("arrow.png"));
         ball = new Ball(new Texture("ball.png"));
         ball.setBounds(1000, 626, 40, 40);
-
+        arrow.setBounds(main.getCenterX(), main.getCenterY(), 32, 32);
+        stage.addActor(arrow);
         stage.addActor(ball);
     }
 
@@ -82,7 +82,12 @@ public class GameScreen implements Screen {
                 ball.collide((Bullet) e);
                 checkBounds(ball);
             }
+            if (e instanceof MainShip) {
+                ball.collide((MainShip) e);
+                checkBounds(ball);
+            }
         }
+        moveArrow();
         moveShip();
     }
 
@@ -103,6 +108,19 @@ public class GameScreen implements Screen {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             createBullet(-90);
         }
+    }
+
+    private void moveArrow() {
+        double dist = Math.sqrt(Math.pow(ball.getCenterX() - main.getCenterX(), 2) + Math.pow(ball.getCenterY() - main.getCenterY(), 2));
+        double cos = (ball.getCenterX() - main.getCenterX()) / dist;
+        double sin = (ball.getCenterY() - main.getCenterY()) / dist;
+        arrow.setPosition((float) (main.getCenterX() + cos * main.getHeight()),
+                (float) (main.getCenterY() + sin * main.getHeight()));
+        float degrees = (float) Math.toDegrees(Math.acos(cos));
+        if (sin < 0) {
+            degrees *= -1;
+        }
+        arrow.setRotation(degrees);
     }
 
     private void createBullet(float rotation) {
