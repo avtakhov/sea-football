@@ -11,17 +11,18 @@ public class RenderObject extends Actor {
 
     public RenderObject(Sprite img) {
         this.img = img;
+      //  this.SPEED = SPEED;
         speedX = 0;
         speedY = 0;
+    }
+
+    public RenderObject(Texture texture) {
+        this(new Sprite(texture));
     }
 
     public void move() {
         setX(getX() + speedX);
         setY(getY() + speedY);
-    }
-
-    public RenderObject(Texture texture) {
-        this(new Sprite(texture));
     }
 
     public float getCenterX() {
@@ -31,6 +32,7 @@ public class RenderObject extends Actor {
     public float getCenterY() {
         return getY() + getHeight() / 2;
     }
+
 
     @Override
     public void act(float time) {
