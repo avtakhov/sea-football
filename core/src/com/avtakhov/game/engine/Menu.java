@@ -1,48 +1,59 @@
-package com.avtakhov.game;
+package com.avtakhov.game.engine;
 
-import com.avtakhov.game.engine.GameScreen;
+import com.avtakhov.game.game_objects.Button;
 import com.avtakhov.game.game_objects.MainShip;
 import com.avtakhov.game.game_objects.RenderObject;
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 
-public class Menu implements Screen {
+public class Menu implements Screen, ScreenInterface {
     private Stage stage;
     private OrthographicCamera camera;
-    MainShip main;
     RenderObject back;
     Button playButton;
-
+    Button musicButton;
+    private static boolean isMusic = true;
+    long idMusic;
     public Menu(Game aGame) {
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("fontmusic.mp3"));
+        idMusic = sound.play(1.0f); // play new sound and keep handle for further manipulation
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 2000, 1252);
         stage = new Stage();
         back = new RenderObject(new Texture("menu.jpg"));
         back.setBounds(0, 0, 2000, 1252);
         stage.addActor(back);
-        playButton = new Button(new Texture("img.png"));
-        playButton.setBounds(back.getWidth() / 2 - 200, back.getHeight() / 20, 300, 200);
-        stage.addActor(playButton);
+        playButton = createButton(stage, "button.png", back.getWidth() / 3, back.getHeight() / 20, 450, 200);
+        musicButton = createButton(stage, "music.jpg", back.getWidth() - 300, back.getHeight() - 200, 300, 200);
         stage.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println(x + " " + y);
                 if (x >= 255 && x <= 350 && y >= 29 && y <= 98) {
                     aGame.setScreen(new GameScreen(aGame));
+                }
+                if (x >= 542 && x <= 640 && y >= 402 && y <= 480) {
+                    if (isMusic) {
+                        sound.stop(idMusic);
+                        musicButton.remove();
+                        musicButton = createButton(stage, "musicoff.jpg", back.getWidth() - 300, back.getHeight() - 200, 300, 200);
+                        isMusic = false;
+                    } else {
+                        idMusic = sound.play(1.0f);
+                        musicButton.remove();
+                        musicButton = createButton(stage, "music.jpg", back.getWidth() - 300, back.getHeight() - 200, 300, 200);
+                        isMusic = true;
+                    }
                 }
             }
         });

@@ -1,6 +1,5 @@
 package com.avtakhov.game.desktop;
 
-import com.avtakhov.game.Menu;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 

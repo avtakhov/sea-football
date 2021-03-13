@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, ScreenInterface {
     private Stage stage;
     private OrthographicCamera camera;
 
