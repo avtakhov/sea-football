@@ -12,13 +12,20 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class GameScreen implements Screen, ScreenInterface {
     private Stage stage;
     private OrthographicCamera camera;
-
+    private Socket socket;
     MainShip main;
     RenderObject back;
     Ball ball;
@@ -33,7 +40,7 @@ public class GameScreen implements Screen, ScreenInterface {
         main.setBounds(camera.position.x, camera.position.y, 128, 40);
         back.setBounds(1000, 626, 2000, 1252);
         RenderObject backBack = new RenderObject(new Texture("back_back.png"));
-        backBack.setBounds(0, 0, 4000, 4000);
+        backBack.setBounds(1000, 626, 4000, 4000);
         stage.addActor(backBack);
         stage.addActor(back);
         stage.addActor(main);
@@ -44,8 +51,65 @@ public class GameScreen implements Screen, ScreenInterface {
         arrow.setBounds(main.getX(), main.getY(), 32, 32);
         stage.addActor(arrow);
         stage.addActor(ball);
+        connectSocket();
+        configSocketEvents();
     }
 
+    public void connectSocket() {
+        try {
+            socket = IO.socket("http://localhost:8080");
+            socket.connect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void configSocketEvents(){
+        socket.on(Socket.EVENT_CONNECT, args -> {
+            Gdx.app.log("SocketIO", "Connected");
+           //player = new Starship(playerShip);
+        }).on("socketID", args -> {
+            JSONObject data = (JSONObject) args[0];
+            try {
+
+                String id = data.getString("id");
+                Gdx.app.log("SocketIO", "My ID: " + id);
+            } catch (JSONException e) {
+                Gdx.app.log("SocketIO", "Error getting ID");
+            }
+        }).on("newPlayer", args -> {
+            JSONObject data = (JSONObject) args[0];
+            try {
+                String id = data.getString("id");
+                Gdx.app.log("SocketIO", "New Player Connect: " + id);
+                //friendlyPlayers.put(id, new Starship(friendlyShip));
+            }catch(JSONException e){
+                Gdx.app.log("SocketIO", "Error getting New PlayerID");
+            }
+        }).on("playerDisconnected", args -> {
+            JSONObject data = (JSONObject) args[0];
+            try {
+                String id = data.getString("id");
+                //friendlyPlayers.remove(id);
+            }catch(JSONException e){
+                Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
+            }
+        }).on("getPlayers", args -> {
+            JSONArray objects = (JSONArray) args[0];
+            try {
+                for(int i = 0; i < objects.length(); i++){
+                  //  Starship coopPlayer = new Starship(friendlyShip);
+                    Vector2 position = new Vector2();
+                    position.x = ((Double) objects.getJSONObject(i).getDouble("x")).floatValue();
+                    position.y = ((Double) objects.getJSONObject(i).getDouble("y")).floatValue();
+                   // coopPlayer.setPosition(position.x, position.y);
+
+                  //  friendlyPlayers.put(objects.getJSONObject(i).getString("id"), coopPlayer);
+                }
+            } catch(JSONException e){
+
+            }
+        });
+    }
     private long start = System.currentTimeMillis();
 
     public void sleep(int fps) {
@@ -119,7 +183,7 @@ public class GameScreen implements Screen, ScreenInterface {
         double cos = (ball.getX() - main.getX()) / dist;
         double sin = (ball.getY() - main.getY()) / dist;
         arrow.setPosition((float) (main.getX() + cos * main.getHeight() * 2),
-                (float) (main.getY()  + sin * main.getHeight() * 2));
+                (float) (main.getY() + sin * main.getHeight() * 2));
         float degrees = (float) Math.toDegrees(Math.acos(cos));
         if (sin < 0) {
             degrees *= -1;

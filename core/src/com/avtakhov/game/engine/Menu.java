@@ -38,7 +38,6 @@ public class Menu implements Screen, ScreenInterface {
         stage.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println(x + " " + y);
                 if (x >= 255 && x <= 350 && y >= 29 && y <= 98) {
                     aGame.setScreen(new GameScreen(aGame));
                 }
