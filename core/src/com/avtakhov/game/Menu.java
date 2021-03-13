@@ -32,7 +32,7 @@ public class Menu implements Screen {
         camera.setToOrtho(false, 2000, 1252);
         stage = new Stage();
         back = new RenderObject(new Texture("menu.jpg"));
-        back.setBounds(0, 0, 2000, 1252);
+        back.setBounds(1000, 626, 2000, 1252);
         stage.addActor(back);
         playButton = new Button(new Texture("img.png"));
         playButton.setBounds(back.getWidth() / 2 - 200, back.getHeight() / 20, 300, 200);

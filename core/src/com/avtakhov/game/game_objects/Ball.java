@@ -14,8 +14,8 @@ public class Ball extends RenderObject {
             float speedY = bullet.getSpeedY();
             float x = bullet.getX();
             float y = bullet.getY();
-            float xDiff = (x - getCenterX()) * (x - getCenterX());
-            float yDiff = (y - getCenterY()) * (y - getCenterY());
+            float xDiff = (x - getX()) * (x - getX());
+            float yDiff = (y - getY()) * (y - getY());
             float rad2 = getWidth() * getWidth() / 4;
             if (xDiff + yDiff < rad2) {
                 this.speedX += speedX / 2;
@@ -28,10 +28,10 @@ public class Ball extends RenderObject {
     public void collide(MainShip ship) {
         float speedX = ship.getSpeedX();
         float speedY = ship.getSpeedY();
-        float x = ship.getCenterX();
-        float y = ship.getCenterY();
-        float xDiff = (x - getCenterX()) * (x - getCenterX());
-        float yDiff = (y - getCenterY()) * (y - getCenterY());
+        float x = ship.getX();
+        float y = ship.getY();
+        float xDiff = (x - getX()) * (x - getX());
+        float yDiff = (y - getY()) * (y - getY());
         float rad2 = ship.getWidth() * ship.getWidth() / 6;
         if (xDiff + yDiff < rad2) {
             this.speedX += speedX / 2;

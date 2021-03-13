@@ -11,7 +11,7 @@ public class RenderObject extends Actor {
 
     public RenderObject(Sprite img) {
         this.img = img;
-      //  this.SPEED = SPEED;
+        //  this.SPEED = SPEED;
         speedX = 0;
         speedY = 0;
     }
@@ -25,21 +25,13 @@ public class RenderObject extends Actor {
         setY(getY() + speedY);
     }
 
-    public float getCenterX() {
-        return getX() + getWidth() / 2;
-    }
-
-    public float getCenterY() {
-        return getY() + getHeight() / 2;
-    }
-
 
     @Override
     public void act(float time) {
         img.setRotation(getRotation());
         img.setOrigin(getOriginX() + getWidth() / 2, getOriginY() + getHeight() / 2);
         img.setSize(getWidth(), getHeight());
-        img.setPosition(getX(), getY());
+        img.setPosition(getX() - getWidth() / 2, getY() - getHeight() / 2);
         img.draw(getStage().getBatch());
     }
 
