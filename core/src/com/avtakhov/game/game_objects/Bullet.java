@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class Bullet extends RenderObject {
-    private final float SPEED = 5;
-    private final int MAX_DISTANCE = 300;
+    private final float SPEED = 10;
+    private final int MAX_DISTANCE = 400;
     private float currentDistance;
     public boolean toDelete;
 

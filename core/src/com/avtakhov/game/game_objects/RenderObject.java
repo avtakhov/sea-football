@@ -14,6 +14,7 @@ public class RenderObject extends Actor {
     public RenderObject(Texture texture) {
         this(new Sprite(texture));
     }
+
     @Override
     public void act(float time) {
         img.setRotation(getRotation());
