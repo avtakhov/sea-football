@@ -1,5 +1,6 @@
 package com.avtakhov.game.engine;
 
+import com.avtakhov.game.game_objects.Ball;
 import com.avtakhov.game.game_objects.Bullet;
 import com.avtakhov.game.game_objects.MainShip;
 import com.avtakhov.game.game_objects.RenderObject;
@@ -32,6 +33,9 @@ public class Game extends ApplicationAdapter {
         back.setBounds(0, 0, 2000, 1252);
         stage.addActor(back);
         stage.addActor(main);
+        Ball ball = new Ball(new Texture("ball.png"));
+        ball.setBounds(1000, 626, 40, 40);
+        stage.addActor(ball);
     }
 
     @Override
@@ -49,15 +53,9 @@ public class Game extends ApplicationAdapter {
             if (e == main || e == back) {
                 continue;
             }
-            e.setX(e.getX() + Gdx.graphics.getDeltaTime() * 8);
+            //e.setX(e.getX() + Gdx.graphics.getDeltaTime() * 8);
         }
         moveShip();
-        if (Gdx.input.isTouched()) {
-            Vector3 touchPos = new Vector3();
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            main.setX(main.getX() - Gdx.input.getDeltaX());
-            main.setY(main.getY() + Gdx.input.getDeltaY());
-        }
     }
 
     private void moveShip() {
@@ -71,8 +69,8 @@ public class Game extends ApplicationAdapter {
             main.rotateBy(1);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            Bullet bullet = new Bullet(new Texture("main.png"));
-            bullet.setBounds(main.getX() + main.getWidth() / 2, main.getY() + main.getHeight() / 2, 12.8f, 4);
+            Bullet bullet = new Bullet(new Texture("bullet1.png"));
+            bullet.setBounds(main.getX() + main.getWidth() / 2, main.getY() + main.getHeight() / 2, 10, 10);
             bullet.setRotation(main.getRotation() + 90);
             stage.addActor(bullet);
         }
