@@ -26,12 +26,12 @@ public class MainShip extends RenderObject {
     @Override
     public void setX(float x) {
         super.setX(x);
-        camera.position.x = x + getWidth() / 2;
+        camera.position.x = x;
     }
 
     public void setY(float y) {
         super.setY(y);
-        camera.position.y = y + getHeight() / 2;
+        camera.position.y = y;
     }
 
     @Override
