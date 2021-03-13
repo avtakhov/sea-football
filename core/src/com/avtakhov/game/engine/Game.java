@@ -1,5 +1,8 @@
-package com.avtakhov.game;
+package com.avtakhov.game.engine;
 
+import com.avtakhov.game.game_objects.Bullet;
+import com.avtakhov.game.game_objects.MainShip;
+import com.avtakhov.game.game_objects.RenderObject;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -14,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 public class Game extends ApplicationAdapter {
     private Stage stage;
     private OrthographicCamera camera;
+
     MainShip main;
     RenderObject back;
 
@@ -57,16 +61,21 @@ public class Game extends ApplicationAdapter {
     }
 
     private void moveShip() {
-    	main.move();
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             main.move();
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.D)){
-        	main.rotateBy(-1);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.A)){
-			main.rotateBy(1);
-		}
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            main.rotateBy(-1);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            main.rotateBy(1);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            Bullet bullet = new Bullet(new Texture("main.png"));
+            bullet.setBounds(main.getX() + main.getWidth() / 2, main.getY() + main.getHeight() / 2, 12.8f, 4);
+            bullet.setRotation(main.getRotation() + 90);
+            stage.addActor(bullet);
+        }
     }
 
     @Override

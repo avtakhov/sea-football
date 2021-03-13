@@ -1,4 +1,4 @@
-package com.avtakhov.game;
+package com.avtakhov.game.game_objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -7,14 +7,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class RenderObject extends Actor {
     protected final Sprite img;
 
-    RenderObject(Sprite img) {
+    public RenderObject(Sprite img) {
         this.img = img;
     }
 
-    RenderObject(Texture texture) {
+    public RenderObject(Texture texture) {
         this(new Sprite(texture));
     }
-
     @Override
     public void act(float time) {
         img.setRotation(getRotation());
