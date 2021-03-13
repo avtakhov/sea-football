@@ -14,15 +14,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.Random;
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, ScreenInterface {
     private Stage stage;
     private OrthographicCamera camera;
 
     MainShip main;
-    BotShip bot;
     RenderObject back;
-    final Ball ball;
+    Ball ball;
     RenderObject arrow;
+    BotShip bot;
     Random random;
 
     public GameScreen(Game aGame) {
@@ -32,20 +32,20 @@ public class GameScreen implements Screen {
         stage = new Stage();
         back = new RenderObject(new Texture("back.png"));
         main = new MainShip(new Texture("main.png"), camera);
-        main.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
-        ball = new Ball(new Texture("ball.png"));
-        ball.setBounds(1000, 626, 40, 40);
-        ball.setPosition(ball.getX() - ball.getWidth() / 2, ball.getY() - ball.getHeight() / 2);
-        bot = new BotShip(new Texture("main.png"), ball);
-        bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
-        back.setBounds(0, 0, 2000, 1252);
+        main.setBounds(camera.position.x, camera.position.y, 128, 40);
+        back.setBounds(1000, 626, 2000, 1252);
         RenderObject backBack = new RenderObject(new Texture("back_back.png"));
         backBack.setBounds(0, 0, 4000, 4000);
         stage.addActor(backBack);
         stage.addActor(back);
         stage.addActor(main);
-        stage.addActor(bot);
         arrow = new RenderObject(new Texture("arrow.png"));
+        ball = new Ball(new Texture("ball.png"));
+        ball.setBounds(1000, 626, 40, 40);
+        ball.setPosition(ball.getX(), ball.getY());
+        bot = new BotShip(new Texture("main.png"), ball);
+        bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
+        stage.addActor(bot);
         arrow.setBounds(main.getX(), main.getY(), 32, 32);
         stage.addActor(arrow);
         stage.addActor(ball);
@@ -101,23 +101,6 @@ public class GameScreen implements Screen {
         moveBotShip();
     }
 
-    private void moveBotShip() {
-        checkBounds(bot);
-        if (ball.getX() < bot.getX()) {
-            if (bot.getSpeedX() > 0) {
-                bot.rotateBy(-1);
-            }
-        } else {
-            if (bot.getSpeedX() < 0) {
-                bot.rotateBy(1);
-            }
-        }
-        if (random.nextInt() % 27 == 0) {
-            createBullet(90, bot);
-            createBullet(-90, bot);
-        }
-    }
-
     private void moveShip() {
         checkBounds(main);
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
@@ -136,6 +119,23 @@ public class GameScreen implements Screen {
             createBullet(-90, main);
         }
     }
+
+    private void moveBotShip() {
+        //checkBounds(bot);
+        if (random.nextInt() % 27 == 0) {
+            createBullet(90, bot);
+            createBullet(-90, bot);
+        }
+        //System.out.println(((ball.getX() - bot.getX()) * bot.getSpeedX() + (ball.getY() - bot.getY()) * bot.getSpeedY()));
+        // TODO Math update
+        if (((ball.getX() - bot.getX()) * bot.getSpeedX() + (ball.getY() - bot.getY()) * bot.getSpeedY()) < 0 || bot.getLastX() == bot.getX() &&
+                                                                                                                    bot.getLastY() == bot.getY()) {
+            bot.rotateBy(10);
+        }
+        bot.setLastX(bot.getX());
+        bot.setLastY(bot.getY());
+    }
+
 
     private void moveArrow() {
         double dist = Math.sqrt(Math.pow(ball.getX() - main.getX(), 2) + Math.pow(ball.getY() - main.getY(), 2));

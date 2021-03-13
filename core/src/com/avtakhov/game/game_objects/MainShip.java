@@ -25,10 +25,4 @@ public class MainShip extends Ship {
         camera.position.y = y;
     }
 
-    @Override
-    public void setBounds(float x, float y, float w, float h) {
-        super.setBounds(x, y, w, h);
-        setX(x);
-        setY(y);
-    }
 }
