@@ -17,26 +17,33 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 public class GameScreen implements Screen, ScreenInterface {
+    private final float UPDATE_TIME = 1 / 60f;
+    float timer = 0;
+
     private Stage stage;
     private OrthographicCamera camera;
     private Socket socket;
+    Texture ship;
     MainShip main;
     RenderObject back;
     Ball ball;
     RenderObject arrow;
+    HashMap<String, RenderObject> objects;
 
     public GameScreen(Game aGame) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
         stage = new Stage();
+        ship = new Texture("main.png");
         back = new RenderObject(new Texture("back.png"));
-        main = new MainShip(new Texture("main.png"), camera);
+        main = new MainShip(ship, camera);
         main.setBounds(camera.position.x, camera.position.y, 128, 40);
         back.setBounds(1000, 626, 2000, 1252);
         RenderObject backBack = new RenderObject(new Texture("back_back.png"));
@@ -51,6 +58,7 @@ public class GameScreen implements Screen, ScreenInterface {
         arrow.setBounds(main.getX(), main.getY(), 32, 32);
         stage.addActor(arrow);
         stage.addActor(ball);
+        objects = new HashMap<>();
         connectSocket();
         configSocketEvents();
     }
@@ -63,10 +71,25 @@ public class GameScreen implements Screen, ScreenInterface {
             e.printStackTrace();
         }
     }
-    public void configSocketEvents(){
+
+    public void updateServer(float dt) {
+        timer += dt;
+        if (main != null) {
+            JSONObject data = new JSONObject();
+            try {
+                data.put("x", main.getX());
+                data.put("y", main.getY());
+                data.put("rot", main.getRotation());
+                socket.emit("playerMoved", data);
+            } catch (JSONException e) {
+                Gdx.app.log("SOCKET.IO", "Error");
+            }
+        }
+    }
+
+    public void configSocketEvents() {
         socket.on(Socket.EVENT_CONNECT, args -> {
             Gdx.app.log("SocketIO", "Connected");
-           //player = new Starship(playerShip);
         }).on("socketID", args -> {
             JSONObject data = (JSONObject) args[0];
             try {
@@ -81,35 +104,57 @@ public class GameScreen implements Screen, ScreenInterface {
             try {
                 String id = data.getString("id");
                 Gdx.app.log("SocketIO", "New Player Connect: " + id);
+                RenderObject news = new RenderObject(ship);
+                news.setBounds(100, 100, 128, 40);
+                objects.put(id, news);
+                stage.addActor(news);
+                //objects.put(id, news);
                 //friendlyPlayers.put(id, new Starship(friendlyShip));
-            }catch(JSONException e){
+            } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting New PlayerID");
             }
         }).on("playerDisconnected", args -> {
             JSONObject data = (JSONObject) args[0];
             try {
                 String id = data.getString("id");
-                //friendlyPlayers.remove(id);
-            }catch(JSONException e){
+                RenderObject a = objects.getOrDefault(id, new RenderObject(ship));
+                a.remove();
+            } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
             }
-        }).on("getPlayers", args -> {
-            JSONArray objects = (JSONArray) args[0];
+        }).on("playerMoved", args -> {
+            JSONObject data = (JSONObject) args[0];
             try {
-                for(int i = 0; i < objects.length(); i++){
-                  //  Starship coopPlayer = new Starship(friendlyShip);
-                    Vector2 position = new Vector2();
-                    position.x = ((Double) objects.getJSONObject(i).getDouble("x")).floatValue();
-                    position.y = ((Double) objects.getJSONObject(i).getDouble("y")).floatValue();
-                   // coopPlayer.setPosition(position.x, position.y);
-
-                  //  friendlyPlayers.put(objects.getJSONObject(i).getString("id"), coopPlayer);
+                String id = data.getString("id");
+                double x = data.getDouble("x");
+                double y = data.getDouble("y");
+                double rot = data.getDouble("rot");
+                if (objects.get(id) != null) {
+                    objects.get(id).setPosition((float) x, (float) y);
+                    objects.get(id).setRotation((float) rot);
                 }
-            } catch(JSONException e){
+            } catch (JSONException ignored) {
+            }
+        }).on("getPlayers", args -> {
+            JSONArray objects1 = (JSONArray) args[0];
+            try {
+                for (int i = 0; i < objects1.length(); i++) {
+                    //  Starship coopPlayer = new Starship(friendlyShip);
+                    RenderObject coopPlayer = new RenderObject(ship);
+                    Vector2 position = new Vector2();
+                    position.x = ((Double) objects1.getJSONObject(i).getDouble("x")).floatValue();
+                    position.y = ((Double) objects1.getJSONObject(i).getDouble("y")).floatValue();
+                    coopPlayer.setBounds(position.x, position.y, 128, 40);
+                    // objects.put(objects.getJSONObject(i).getString("id"), coopPlayer);
+                    objects.put(objects1.getJSONObject(i).getString("id"), coopPlayer);
+                    stage.addActor(coopPlayer);
+                }
+            } catch (JSONException ignored) {
 
             }
         });
     }
+
     private long start = System.currentTimeMillis();
 
     public void sleep(int fps) {
@@ -155,6 +200,10 @@ public class GameScreen implements Screen, ScreenInterface {
                 checkBounds(ball);
             }
         }
+        //for (Map.Entry<String, RenderObject> renderObject : objects.entrySet()) {
+        //    renderObject.getValue().act(Gdx.graphics.getDeltaTime());
+        //}
+        updateServer(Gdx.graphics.getDeltaTime());
         moveArrow();
         moveShip();
     }
@@ -248,5 +297,6 @@ public class GameScreen implements Screen, ScreenInterface {
 
     @Override
     public void dispose() {
+        ship.dispose();
     }
 }
