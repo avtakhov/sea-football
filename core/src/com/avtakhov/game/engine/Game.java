@@ -1,5 +1,9 @@
-package com.avtakhov.game;
+package com.avtakhov.game.engine;
 
+import com.avtakhov.game.game_objects.Ball;
+import com.avtakhov.game.game_objects.Bullet;
+import com.avtakhov.game.game_objects.MainShip;
+import com.avtakhov.game.game_objects.RenderObject;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -14,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 public class Game extends ApplicationAdapter {
     private Stage stage;
     private OrthographicCamera camera;
+
     MainShip main;
     RenderObject back;
 
@@ -28,6 +33,9 @@ public class Game extends ApplicationAdapter {
         back.setBounds(0, 0, 2000, 1252);
         stage.addActor(back);
         stage.addActor(main);
+        Ball ball = new Ball(new Texture("ball.png"));
+        ball.setBounds(1000, 626, 40, 40);
+        stage.addActor(ball);
     }
 
     @Override
@@ -45,28 +53,27 @@ public class Game extends ApplicationAdapter {
             if (e == main || e == back) {
                 continue;
             }
-            e.setX(e.getX() + Gdx.graphics.getDeltaTime() * 8);
+            //e.setX(e.getX() + Gdx.graphics.getDeltaTime() * 8);
         }
         moveShip();
-        if (Gdx.input.isTouched()) {
-            Vector3 touchPos = new Vector3();
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            main.setX(main.getX() - Gdx.input.getDeltaX());
-            main.setY(main.getY() + Gdx.input.getDeltaY());
-        }
     }
 
     private void moveShip() {
-    	main.move();
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             main.move();
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.D)){
-        	main.rotateBy(-1);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.A)){
-			main.rotateBy(1);
-		}
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            main.rotateBy(-1);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            main.rotateBy(1);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            Bullet bullet = new Bullet(new Texture("bullet1.png"));
+            bullet.setBounds(main.getX() + main.getWidth() / 2, main.getY() + main.getHeight() / 2, 10, 10);
+            bullet.setRotation(main.getRotation() + 90);
+            stage.addActor(bullet);
+        }
     }
 
     @Override
