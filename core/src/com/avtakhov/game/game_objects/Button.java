@@ -1,4 +1,4 @@
-package com.avtakhov.game;
+package com.avtakhov.game.game_objects;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,7 +8,7 @@ public class Button extends Actor {
 
     private final Texture img;
 
-    Button(Texture img) {
+    public Button(Texture img) {
         this.img = img;
     }
 

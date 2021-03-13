@@ -1,6 +1,6 @@
 package com.avtakhov.game.desktop;
 
-import com.avtakhov.game.Menu;
+import com.avtakhov.game.engine.Menu;
 import com.badlogic.gdx.Game;
 
 public class MyGame extends Game {
