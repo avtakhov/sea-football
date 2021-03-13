@@ -1,7 +1,6 @@
 package com.avtakhov.game.engine;
 
 import com.avtakhov.game.game_objects.Button;
-import com.avtakhov.game.game_objects.MainShip;
 import com.avtakhov.game.game_objects.RenderObject;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -15,8 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-
-public class Menu implements Screen, ScreenInterface {
+public class GameType implements Screen, ScreenInterface {
     private Stage stage;
     private OrthographicCamera camera;
     RenderObject back;
@@ -24,9 +22,7 @@ public class Menu implements Screen, ScreenInterface {
     Button musicButton;
     private static boolean isMusic = true;
     long idMusic;
-    public Menu(Game aGame) {
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("fontmusic.mp3"));
-        idMusic = sound.play(1.0f); // play new sound and keep handle for further manipulation
+    public GameType(Game aGame) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 2000, 1252);
         stage = new Stage();
@@ -34,28 +30,15 @@ public class Menu implements Screen, ScreenInterface {
         back.setBounds(0, 0, 2000, 1252);
         stage.addActor(back);
         playButton = createButton(stage, "button.png", back.getWidth() / 3,
-                                                back.getHeight() / 20, 450, 200);
+                back.getHeight() / 20, 450, 200);
         musicButton = createButton(stage, "music.jpg", back.getWidth() - 300,
-                                                back.getHeight() - 200, 300, 200);
+                back.getHeight() - 200, 300, 200);
         stage.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println(x + " " + y);
                 if (x >= 255 && x <= 350 && y >= 29 && y <= 98) {
                     aGame.setScreen(new GameScreen(aGame));
-                }
-                if (x >= 542 && x <= 640 && y >= 402 && y <= 480) {
-                    if (isMusic) {
-                        sound.stop(idMusic);
-                        musicButton.remove();
-                        musicButton = createButton(stage, "musicoff.jpg", back.getWidth() - 300, back.getHeight() - 200, 300, 200);
-                        isMusic = false;
-                    } else {
-                        idMusic = sound.play(1.0f);
-                        musicButton.remove();
-                        musicButton = createButton(stage, "music.jpg", back.getWidth() - 300, back.getHeight() - 200, 300, 200);
-                        isMusic = true;
-                    }
                 }
             }
         });
@@ -104,5 +87,4 @@ public class Menu implements Screen, ScreenInterface {
     @Override
     public void dispose() {
     }
-
 }

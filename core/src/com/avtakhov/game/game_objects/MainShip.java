@@ -4,31 +4,15 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
-public class MainShip extends RenderObject {
+public class MainShip extends Ship {
 
     OrthographicCamera camera;
-    private float x;
-    private float y;
-    private float rotation;
-    private final float SPEED = 1.5f;
 
     public MainShip(Texture img, OrthographicCamera camera) {
-        super(new Sprite(img));
+        super(img);
         this.camera = camera;
     }
-    @Override
-    public void move() {
-        setX(getX() + speedX);
-        setY(getY() + speedY);
-    }
 
-    @Override
-    public void act(float time) {
-        super.act(time);
-        speedX = SPEED * (float) Math.cos(Math.toRadians(getRotation()));
-        speedY = SPEED * (float) Math.sin(Math.toRadians(getRotation()));
-        move();
-    }
 
     @Override
     public void setX(float x) {

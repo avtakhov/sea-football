@@ -1,9 +1,6 @@
 package com.avtakhov.game.engine;
 
-import com.avtakhov.game.game_objects.Ball;
-import com.avtakhov.game.game_objects.Bullet;
-import com.avtakhov.game.game_objects.MainShip;
-import com.avtakhov.game.game_objects.RenderObject;
+import com.avtakhov.game.game_objects.*;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -15,32 +12,40 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public class GameScreen implements Screen, ScreenInterface {
+import java.util.Random;
+
+public class GameScreen implements Screen {
     private Stage stage;
     private OrthographicCamera camera;
 
     MainShip main;
+    BotShip bot;
     RenderObject back;
-    Ball ball;
+    final Ball ball;
     RenderObject arrow;
+    Random random;
 
     public GameScreen(Game aGame) {
+        random = new Random();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
         stage = new Stage();
         back = new RenderObject(new Texture("back.png"));
         main = new MainShip(new Texture("main.png"), camera);
         main.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
+        ball = new Ball(new Texture("ball.png"));
+        ball.setBounds(1000, 626, 40, 40);
+        ball.setPosition(ball.getX() - ball.getWidth() / 2, ball.getY() - ball.getHeight() / 2);
+        bot = new BotShip(new Texture("main.png"), ball);
+        bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
         back.setBounds(0, 0, 2000, 1252);
         RenderObject backBack = new RenderObject(new Texture("back_back.png"));
         backBack.setBounds(-1000, -1000, 4000, 4000);
         stage.addActor(backBack);
         stage.addActor(back);
         stage.addActor(main);
+        stage.addActor(bot);
         arrow = new RenderObject(new Texture("arrow.png"));
-        ball = new Ball(new Texture("ball.png"));
-        ball.setBounds(1000, 626, 40, 40);
-        ball.setPosition(ball.getX() - ball.getWidth() / 2, ball.getY() - ball.getHeight() / 2);
         arrow.setBounds(main.getCenterX(), main.getCenterY(), 32, 32);
         stage.addActor(arrow);
         stage.addActor(ball);
@@ -93,6 +98,24 @@ public class GameScreen implements Screen, ScreenInterface {
         }
         moveArrow();
         moveShip();
+        moveBotShip();
+    }
+
+    private void moveBotShip() {
+        checkBounds(bot);
+        if (ball.getCenterX() < bot.getCenterX()) {
+            if (bot.getSpeedX() > 0) {
+                bot.rotateBy(-1);
+            }
+        } else {
+            if (bot.getSpeedX() < 0) {
+                bot.rotateBy(1);
+            }
+        }
+        if (random.nextInt() % 27 == 0) {
+            createBullet(90, bot);
+            createBullet(-90, bot);
+        }
     }
 
     private void moveShip() {
@@ -107,10 +130,10 @@ public class GameScreen implements Screen, ScreenInterface {
             main.rotateBy(1);
         }
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            createBullet(90);
+            createBullet(90, main);
         }
         if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-            createBullet(-90);
+            createBullet(-90, main);
         }
     }
 
@@ -127,10 +150,10 @@ public class GameScreen implements Screen, ScreenInterface {
         arrow.setRotation(degrees);
     }
 
-    private void createBullet(float rotation) {
+    private void createBullet(float rotation, Ship ship) {
         Bullet bullet = new Bullet(new Texture("bullet1.png"));
-        bullet.setBounds(main.getX() + main.getWidth() / 2, main.getY() + main.getHeight() / 2, 10, 10);
-        bullet.setRotation(main.getRotation() + rotation);
+        bullet.setBounds(ship.getX() + ship.getWidth() / 2, ship.getY() + ship.getHeight() / 2, 10, 10);
+        bullet.setRotation(ship.getRotation() + rotation);
         stage.addActor(bullet);
     }
 
