@@ -52,7 +52,7 @@ public class GameScreen implements Screen {
         batch.end();
 
         for (Actor e : stage.getActors()) {
-            if (!e.equals(back) && e instanceof RenderObject) {
+            if (!e.equals(back) && e instanceof RenderObject && ! (e instanceof Bullet)) {
                 if (e instanceof Ball) {
                     checkBounds((Ball) e);
                     continue;
