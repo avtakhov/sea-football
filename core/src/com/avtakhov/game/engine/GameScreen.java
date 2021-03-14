@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class GameScreen implements Screen, ScreenInterface {
-    private final float UPDATE_TIME = 1 / 20f;
+    private final float UPDATE_TIME = 1 / 30f;
     float timer = 0;
 
     private Stage stage;
@@ -236,8 +236,8 @@ public class GameScreen implements Screen, ScreenInterface {
             JSONArray objects1 = (JSONArray) args[0];
             try {
                 for (int i = 0; i < objects1.length(); i++) {
-                    int color = objects1.getJSONObject(i).getInt("color");
-                    RenderObject coopPlayer = new RenderObject(color % 2 == 0 ? red_ship : blue_ship);
+                    //int color = objects1.getJSONObject(i).getInt("color");
+                    RenderObject coopPlayer = new RenderObject(red_ship);
                     Vector2 position = new Vector2();
                     position.x = ((Double) objects1.getJSONObject(i).getDouble("x")).floatValue();
                     position.y = ((Double) objects1.getJSONObject(i).getDouble("y")).floatValue();
