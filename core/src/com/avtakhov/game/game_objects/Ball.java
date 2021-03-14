@@ -6,11 +6,13 @@ import com.badlogic.gdx.graphics.Texture;
 public class Ball extends RenderObject {
     private float z;
     private float speedZ;
+    private int rotDir;
 
     public Ball(Texture texture) {
         super(texture);
         z = 0;
         speedZ = 0;
+        rotDir = 0;
     }
 
     public void collide(Bullet bullet) {
@@ -43,8 +45,10 @@ public class Ball extends RenderObject {
             this.speedX += speedX;
             this.speedY += speedY;
             if (z < 1) {
-                this.speedZ = (Math.abs(speedX) + Math.abs(speedY)) / 2;
+                rotDir = (int) (Math.random() * 3) - 1;
+                this.speedZ = (Math.abs(speedX) + Math.abs(speedY)) / 3;
             }
+
         }
     }
 
@@ -64,7 +68,8 @@ public class Ball extends RenderObject {
         speedY *= 0.99f;
         z += speedZ;
         if (z > 0) {
-            speedZ -= 0.1f;
+            setRotation(getRotation() + rotDir * 3);
+            speedZ -= 0.05f;
         } else {
             speedZ = 0;
             z = 0;

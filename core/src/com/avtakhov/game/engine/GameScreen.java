@@ -37,6 +37,7 @@ public class GameScreen implements Screen, ScreenInterface {
     //BotShip bot;
     Gate gateLeft;
     Gate gateRight;
+    ScoreBoard scoreBoard;
     Random random;
 
     public GameScreen(Game aGame) {
@@ -60,6 +61,8 @@ public class GameScreen implements Screen, ScreenInterface {
         gateRight.setBounds(back.getWidth() - 24, back.getHeight() / 2, 48, 270);
         arrow = new RenderObject(new Texture("arrow.png"));
         ball = new Ball(new Texture("ball.png"));
+        scoreBoard = new ScoreBoard(new Texture("score.png"));
+        scoreBoard.setBounds(back.getWidth() / 2, back.getHeight() + 100, 600, 90);
         ball.setBounds(1000, 626, 40, 40);
         ball.setPosition(ball.getX(), ball.getY());
         //bot = new BotShip(new Texture("main.png"), ball);
@@ -70,6 +73,7 @@ public class GameScreen implements Screen, ScreenInterface {
         stage.addActor(gateRight);
         stage.addActor(arrow);
         stage.addActor(ball);
+        stage.addActor(scoreBoard);
         objects = new HashMap<>();
         connectSocket();
         configSocketEvents();
@@ -94,6 +98,14 @@ public class GameScreen implements Screen, ScreenInterface {
         return 0;
     }
 
+    private void setStartPosition() {
+        ball.setX(back.getWidth() / 2);
+        ball.setY(back.getHeight() / 2);
+        ball.setSpeedX(0);
+        ball.setSpeedY(0);
+        ball.setZ(0);
+    }
+
     public void updateServer(float dt) {
         timer += dt;
         if (main != null) {
@@ -102,13 +114,21 @@ public class GameScreen implements Screen, ScreenInterface {
                 data.put("x", main.getX());
                 data.put("y", main.getY());
                 data.put("rot", main.getRotation());
+                int goal = goal();
+                if (goal != 0) {
+                    setStartPosition();
+                    if (goal == 1) {
+                        scoreBoard.setLEFT_SCORE(scoreBoard.getLEFT_SCORE() + 1);
+                    }
+                    if (goal == -1) {
+                        scoreBoard.setRIGHT_SCORE(scoreBoard.getRIGHT_SCORE() + 1);
+                    }
+                }
                 data.put("ballX", ball.getX());
                 data.put("ballY", ball.getY());
                 data.put("ballZ", ball.getZ());
-                int goal = goal();
-                if (goal != 0) {
-                    data.put("goal", goal);
-                }
+                data.put("scoreLeft", scoreBoard.getLEFT_SCORE());
+                data.put("scoreRight", scoreBoard.getRIGHT_SCORE());
                 socket.emit("playerMoved", data);
             } catch (JSONException e) {
                 Gdx.app.log("SOCKET.IO", "Error");
@@ -159,6 +179,10 @@ public class GameScreen implements Screen, ScreenInterface {
                 double ballY = data.getDouble("ballY");
                 double ballZ = data.getDouble("ballZ");
                 double rot = data.getDouble("rot");
+                int ls = data.getInt("scoreLeft");
+                int rs = data.getInt("scoreRight");
+                scoreBoard.setLEFT_SCORE(ls);
+                scoreBoard.setRIGHT_SCORE(rs);
                 if (objects.get(id) != null) {
                     objects.get(id).setPosition((float) x, (float) y);
                     objects.get(id).setRotation((float) rot);
