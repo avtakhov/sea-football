@@ -44,8 +44,10 @@ public class GameScreen implements Screen, ScreenInterface {
     Gate gateRight;
     ScoreBoard scoreBoard;
     Random random;
+    boolean needBot;
 
-    public GameScreen(Game aGame) {
+    public GameScreen(Game aGame, boolean needBot) {
+        this.needBot = needBot;
         random = new Random();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
@@ -75,21 +77,17 @@ public class GameScreen implements Screen, ScreenInterface {
         scoreBoard.setBounds(back.getWidth() / 2, back.getHeight() + 100, 600, 90);
         ball.setBounds(1000, 626, 40, 40);
         ball.setPosition(ball.getX(), ball.getY());
-        //bot = new BotShip(new Texture("main.png"), ball);
-        // bot.setBounds(camera.position.x - 50, camera.position.y - 50, 100, 40);
-        //stage.addActor(bot);
-        bot = new BotShip(new Texture("main.png"), ball);
-        bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
-        stage.addActor(bot);
-        // Button homeButton = createButton(stage, "button.png", 0,
-        //         back.getHeight() - 200, 450, 200);
+        if (needBot) {
+            bot = new BotShip(new Texture("main.png"), ball);
+            bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
+            stage.addActor(bot);
+        }
         arrow.setBounds(main.getX(), main.getY(), 32, 32);
         stage.addActor(gateLeft);
         stage.addActor(gateRight);
         stage.addActor(arrow);
         stage.addActor(ball);
         stage.addActor(scoreBoard);
-        //   stage.addActor(homeButton);
         objects = new HashMap<>();
         connectSocket();
         configSocketEvents();
@@ -316,7 +314,9 @@ public class GameScreen implements Screen, ScreenInterface {
         updateServer(Gdx.graphics.getDeltaTime());
         moveArrow();
         moveShip();
-        moveBotShip();
+        if (needBot) {
+            moveBotShip();
+        }
     }
 
     private void moveShip() {

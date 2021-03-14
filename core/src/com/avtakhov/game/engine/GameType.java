@@ -29,16 +29,19 @@ public class GameType implements Screen, ScreenInterface {
         back = new RenderObject(new Texture("menunew.png"));
         back.setBounds(1000, 626, 2000, 1252);
         stage.addActor(back);
-        Button singleGame = createButton(stage, "button.png", back.getWidth() / 3,
-                back.getHeight() / 5, 450, 200);
-        Button multiPlayerGame = createButton(stage, "button.png", back.getWidth() / 3,
-                back.getHeight() / 2, 450, 200);
+        Button singleGame = createButton(stage, "single.png", back.getWidth() / 3 + 100,
+                back.getHeight() / 3, 450, 200);
+        Button multiPlayerGame = createButton(stage, "multi.png", back.getWidth() / 3 + 100,
+                back.getHeight() / 8, 450, 200);
         stage.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println(x + " " + y);
-                if (x >= 211 && x <= 355 && y >= 241 && y <= 316) {
-                    aGame.setScreen(new GameScreen(aGame));
+                if (x >= 245 && x <= 390 && y >= 160 && y <= 235) {
+                    aGame.setScreen(new GameScreen(aGame, true));
+                }
+                if (x >= 245 && x <= 390 && y >= 60 && y <= 136) {
+                    aGame.setScreen(new GameScreen(aGame, false));
                 }
             }
         });
