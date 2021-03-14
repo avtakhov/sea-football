@@ -98,32 +98,6 @@ public class GameScreen implements Screen, ScreenInterface {
         return 0;
     }
 
-    private void setStartPosition() {
-        ball.setX(back.getWidth() / 2);
-        ball.setY(back.getHeight() / 2);
-        ball.setSpeedX(0);
-        ball.setSpeedY(0);
-        ball.setZ(0);
-    }
-
-    public void updateServer2() {
-        if (ball.isTouched()) {
-            JSONObject data = new JSONObject();
-            try {
-                ball.setTouched(false);
-                data.put("ballX", ball.getX());
-                data.put("ballY", ball.getY());
-                data.put("ballZ", ball.getZ());
-                data.put("ballSX", ball.getSpeedX());
-                data.put("ballSY", ball.getSpeedY());
-                data.put("ballSZ", ball.getSpeedZ());
-                socket.emit("ballMoved", data);
-            } catch (JSONException e) {
-                Gdx.app.log("SOCKET.IO", "Error");
-            }
-        }
-    }
-
     public void updateServer(float dt) {
         timer += dt;
         if (main != null && timer > UPDATE_TIME) {
@@ -282,18 +256,13 @@ public class GameScreen implements Screen, ScreenInterface {
                 checkBounds(ball);
             }
         }
-        //for (Map.Entry<String, RenderObject> renderObject : objects.entrySet()) {
-        //    renderObject.getValue().act(Gdx.graphics.getDeltaTime());
-        //}
         updateServer(Gdx.graphics.getDeltaTime());
         updateServer2();
         moveArrow();
         moveShip();
-        //moveBotShip();
     }
 
     private void moveShip() {
-        checkBounds(main);
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             main.move();
         }
@@ -310,23 +279,6 @@ public class GameScreen implements Screen, ScreenInterface {
             createBullet(-90, main);
         }
     }
-
-   /*private void moveBotShip() {
-        //checkBounds(bot);
-        if (random.nextInt() % 27 == 0) {
-            createBullet(90, bot);
-            createBullet(-90, bot);
-        }
-        //System.out.println(((ball.getX() - bot.getX()) * bot.getSpeedX() + (ball.getY() - bot.getY()) * bot.getSpeedY()));
-        // TODO Math update
-        if (((ball.getX() - bot.getX()) * bot.getSpeedX() + (ball.getY() - bot.getY()) * bot.getSpeedY()) < 0 || bot.getLastX() == bot.getX() &&
-                bot.getLastY() == bot.getY()) {
-            bot.rotateBy(10);
-        }
-        bot.setLastX(bot.getX());
-        bot.setLastY(bot.getY());
-    }*/
-
 
     private void moveArrow() {
         double dist = Math.sqrt(Math.pow(ball.getX() - main.getX(), 2) + Math.pow(ball.getY() - main.getY(), 2));
@@ -346,29 +298,6 @@ public class GameScreen implements Screen, ScreenInterface {
         bullet.setBounds(ship.getX(), ship.getY(), 10, 10);
         bullet.setRotation(ship.getRotation() + rotation);
         stage.addActor(bullet);
-    }
-
-    private void checkBounds(RenderObject object) {
-        float newX = object.getX() + object.getSpeedX();
-        float newY = object.getY() + object.getSpeedY();
-        if (newX >= back.getWidth() || newX <= 0 || newY >= back.getHeight() || newY <= 0) {
-            object.setX(object.getX() - object.getSpeedX());
-            object.setY(object.getY() - object.getSpeedY());
-        }
-    }
-
-    private void checkBounds(Ball object) {
-        float newX = object.getX() + object.getSpeedX();
-        float newY = object.getY() + object.getSpeedY();
-        if (newX >= back.getWidth() || newX <= 0 || newY >= back.getHeight() || newY <= 0) {
-            if (newX >= back.getWidth() || newX <= 0) {
-                object.setSpeedX(-object.getSpeedX() / 2);
-                object.setSpeedY(object.getSpeedY() / 2);
-            } else {
-                object.setSpeedX(object.getSpeedX() / 2);
-                object.setSpeedY(-object.getSpeedY() / 2);
-            }
-        }
     }
 
     @Override
