@@ -21,8 +21,6 @@ public class GameType implements Screen, ScreenInterface {
     private static boolean isMusic = true;
     long idMusic;
     public GameType(Game aGame) {
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("ostrov_sokrovishc_02.mp3"));
-        idMusic = sound.play(1.0f); // play new sound and keep handle for further manipulation
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 2000, 1252);
         stage = new Stage();
