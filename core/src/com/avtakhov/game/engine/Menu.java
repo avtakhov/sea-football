@@ -26,7 +26,6 @@ public class Menu implements Screen, ScreenInterface {
     long idMusic;
     public Menu(Game aGame) {
         Sound sound = Gdx.audio.newSound(Gdx.files.internal("ostrov_sokrovishc_02.mp3"));
-        sound.loop();
         idMusic = sound.play(1.0f); // play new sound and keep handle for further manipulation
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 2000, 1252);
@@ -42,7 +41,7 @@ public class Menu implements Screen, ScreenInterface {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (x >= 255 && x <= 350 && y >= 29 && y <= 98) {
-                    aGame.setScreen(new GameScreen(aGame));
+                    aGame.setScreen(new GameType(aGame));
                 }
                 if (x >= 542 && x <= 640 && y >= 402 && y <= 480) {
                     if (isMusic) {
