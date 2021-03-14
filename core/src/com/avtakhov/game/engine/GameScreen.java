@@ -54,7 +54,9 @@ public class GameScreen implements Screen, ScreenInterface {
         blue_ship = new Texture("blue_ship.png");
         main_shadow1 = new Texture("main_shadow.png");
         back = new RenderObject(new Texture("back.png"));
-        main = new MainShip(blue_ship, camera);
+        int color = (int) (Math.random() * 2);
+        main = new MainShip(color == 0 ? blue_ship : red_ship, camera);
+        main.setColor(color);
         main.setBounds(camera.position.x, camera.position.y, 100, 40);
         back.setBounds(1000, 626, 2000, 1252);
         RenderObject backBack = new RenderObject(new Texture("back_back.png"));
@@ -79,15 +81,15 @@ public class GameScreen implements Screen, ScreenInterface {
         bot = new BotShip(new Texture("main.png"), ball);
         bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
         stage.addActor(bot);
-       // Button homeButton = createButton(stage, "button.png", 0,
-       //         back.getHeight() - 200, 450, 200);
+        // Button homeButton = createButton(stage, "button.png", 0,
+        //         back.getHeight() - 200, 450, 200);
         arrow.setBounds(main.getX(), main.getY(), 32, 32);
         stage.addActor(gateLeft);
         stage.addActor(gateRight);
         stage.addActor(arrow);
         stage.addActor(ball);
         stage.addActor(scoreBoard);
-     //   stage.addActor(homeButton);
+        //   stage.addActor(homeButton);
         objects = new HashMap<>();
         connectSocket();
         configSocketEvents();
@@ -129,6 +131,7 @@ public class GameScreen implements Screen, ScreenInterface {
                 data.put("x", main.getX());
                 data.put("y", main.getY());
                 data.put("rot", main.getRotation());
+                data.put("color", main.getColor1());
                 int goal = goal();
                 if (goal != 0) {
                     goalA.setBounds(main.getX(), main.getY(), 600, 600);
@@ -203,6 +206,7 @@ public class GameScreen implements Screen, ScreenInterface {
                 double x = data.getDouble("x");
                 double y = data.getDouble("y");
                 double rot = data.getDouble("rot");
+                int color = data.getInt("color");
                 int ls = data.getInt("scoreLeft");
                 int rs = data.getInt("scoreRight");
                 if (scoreBoard.getLEFT_SCORE() < ls) {
@@ -214,7 +218,6 @@ public class GameScreen implements Screen, ScreenInterface {
                 String bId = data.getString("ballId");
                 if (bId.length() > 0) {
                     ball.uid = bId;
-                    System.out.println(ball.uid + " " + uid);
                 }
                 String bl = data.getString("ball");
                 if (bl.length() > 0) {
@@ -229,6 +232,7 @@ public class GameScreen implements Screen, ScreenInterface {
                 if (objects.get(id) != null) {
                     objects.get(id).setPosition((float) x, (float) y);
                     objects.get(id).setRotation((float) rot);
+                    // objects.get(id).set
                 }
             } catch (JSONException ignored) {
             }
@@ -236,8 +240,8 @@ public class GameScreen implements Screen, ScreenInterface {
             JSONArray objects1 = (JSONArray) args[0];
             try {
                 for (int i = 0; i < objects1.length(); i++) {
-                    //int color = objects1.getJSONObject(i).getInt("color");
-                    RenderObject coopPlayer = new RenderObject(red_ship);
+                    int color = objects1.getJSONObject(i).getInt("color");
+                    RenderObject coopPlayer = new RenderObject(color == 0 ? blue_ship : red_ship);
                     Vector2 position = new Vector2();
                     position.x = ((Double) objects1.getJSONObject(i).getDouble("x")).floatValue();
                     position.y = ((Double) objects1.getJSONObject(i).getDouble("y")).floatValue();

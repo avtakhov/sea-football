@@ -7,7 +7,7 @@ public class MainShip extends Ship {
 
     OrthographicCamera camera;
     private String text = "";
-
+    private int color;
     public MainShip(Texture img, OrthographicCamera camera) {
         super(img);
         this.camera = camera;
@@ -22,6 +22,15 @@ public class MainShip extends Ship {
     public void setY(float y) {
         super.setY(y);
         camera.position.y = y;
+    }
+
+
+    public int getColor1() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     public String getText() {
