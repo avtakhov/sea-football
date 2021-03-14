@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class Bullet extends RenderObject {
-    private final float SPEED = 10;
-    private final int MAX_DISTANCE = 400;
+    protected float SPEED = 10;
+    protected int MAX_DISTANCE;
     private float currentDistance;
     public boolean toDelete;
 
@@ -13,6 +13,7 @@ public class Bullet extends RenderObject {
         super(new Sprite(img));
         toDelete = false;
         currentDistance = 0;
+        MAX_DISTANCE = 400;
     }
 
     @Override

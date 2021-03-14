@@ -2,7 +2,6 @@ var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var players = [];
-var ball_ = new ball(0, 0, 0, 0, 0, 0);
 server.listen(8080, function () {
     console.log("Server is now running...");
 });
@@ -11,7 +10,6 @@ io.on('connection', function (socket) {
     console.log("Player Connected!");
     socket.emit('socketID', {id: socket.id});
     socket.emit('getPlayers', players);
-    socket.emit('getBall', ball_);
     socket.broadcast.emit('newPlayer', {id: socket.id});
     socket.on('playerMoved', function (data) {
         data.id = socket.id;
@@ -21,6 +19,7 @@ io.on('connection', function (socket) {
                 players[i].x = data.x;
                 players[i].y = data.y;
                 players[i].rot = data.rot;
+                players[i].color = i % 2;
             }
         }
     });
@@ -33,21 +32,14 @@ io.on('connection', function (socket) {
             }
         }
     });
-    players.push(new player(socket.id, 0, 0, 0));
+    players.push(new player(socket.id, 0, 0, 0, 0));
 });
 
-function ball(x, y, z, xs, ys, zs) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.xs = xs;
-    this.ys = ys;
-    this.zs = zs;
-}
 
-function player(id, x, y, rot) {
+function player(id, x, y, rot, color) {
     this.id = id;
     this.x = x;
     this.y = y;
     this.rot = rot;
+    this.color = color;
 }

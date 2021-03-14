@@ -28,10 +28,13 @@ public class GameScreen implements Screen, ScreenInterface {
     private Stage stage;
     private OrthographicCamera camera;
     private Socket socket;
-    Texture ship;
+    Texture blue_ship;
+    Texture red_ship;
+    Texture main_shadow1;
     MainShip main;
     private String uid = "";
     RenderObject back;
+    private int color;
     Ball ball;
     RenderObject arrow;
     HashMap<String, RenderObject> objects;
@@ -46,10 +49,12 @@ public class GameScreen implements Screen, ScreenInterface {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
         stage = new Stage();
-        ship = new Texture("main.png");
+        red_ship = new Texture("red_ship.png");
+        blue_ship = new Texture("blue_ship.png");
+        main_shadow1 = new Texture("main_shadow.png");
         back = new RenderObject(new Texture("back.png"));
-        main = new MainShip(ship, camera);
-        main.setBounds(camera.position.x, camera.position.y, 128, 40);
+        main = new MainShip(blue_ship, camera);
+        main.setBounds(camera.position.x, camera.position.y, 100, 40);
         back.setBounds(1000, 626, 2000, 1252);
         RenderObject backBack = new RenderObject(new Texture("back_back.png"));
         backBack.setBounds(1000, 626, 4000, 4000);
@@ -67,7 +72,7 @@ public class GameScreen implements Screen, ScreenInterface {
         ball.setBounds(1000, 626, 40, 40);
         ball.setPosition(ball.getX(), ball.getY());
         //bot = new BotShip(new Texture("main.png"), ball);
-        // bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
+        // bot.setBounds(camera.position.x - 50, camera.position.y - 50, 100, 40);
         //stage.addActor(bot);
         arrow.setBounds(main.getX(), main.getY(), 32, 32);
         stage.addActor(gateLeft);
@@ -164,8 +169,8 @@ public class GameScreen implements Screen, ScreenInterface {
             try {
                 String id = data.getString("id");
                 Gdx.app.log("SocketIO", "New Player Connect: " + id);
-                RenderObject news = new RenderObject(ship);
-                news.setBounds(100, 100, 128, 40);
+                RenderObject news = new RenderObject(objects.size() % 2 == 0 ? red_ship : blue_ship);
+                news.setBounds(100, 100, 100, 40);
                 objects.put(id, news);
                 stage.addActor(news);
             } catch (JSONException e) {
@@ -175,7 +180,7 @@ public class GameScreen implements Screen, ScreenInterface {
             JSONObject data = (JSONObject) args[0];
             try {
                 String id = data.getString("id");
-                RenderObject a = objects.getOrDefault(id, new RenderObject(ship));
+                RenderObject a = objects.getOrDefault(id, new RenderObject(red_ship));
                 a.remove();
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
@@ -221,11 +226,12 @@ public class GameScreen implements Screen, ScreenInterface {
             JSONArray objects1 = (JSONArray) args[0];
             try {
                 for (int i = 0; i < objects1.length(); i++) {
-                    RenderObject coopPlayer = new RenderObject(ship);
+                    int color = objects1.getJSONObject(i).getInt("color");
+                    RenderObject coopPlayer = new RenderObject(color % 2 == 0 ? red_ship : blue_ship);
                     Vector2 position = new Vector2();
                     position.x = ((Double) objects1.getJSONObject(i).getDouble("x")).floatValue();
                     position.y = ((Double) objects1.getJSONObject(i).getDouble("y")).floatValue();
-                    coopPlayer.setBounds(position.x, position.y, 128, 40);
+                    coopPlayer.setBounds(position.x, position.y, 100, 40);
                     objects.put(objects1.getJSONObject(i).getString("id"), coopPlayer);
                     stage.addActor(coopPlayer);
                 }
@@ -265,6 +271,7 @@ public class GameScreen implements Screen, ScreenInterface {
 
         for (Actor e : stage.getActors()) {
             if (!e.equals(back) && e instanceof RenderObject && !(e instanceof Bullet)) {
+
                 if (e instanceof Ball) {
                     checkBounds((Ball) e);
                     continue;
@@ -274,6 +281,9 @@ public class GameScreen implements Screen, ScreenInterface {
             if (e instanceof Bullet) {
                 ball.collide((Bullet) e);
                 checkBounds(ball);
+                if (((Bullet) e).toDelete) {
+                    e.remove();
+                }
             }
             if (e instanceof MainShip) {
                 ball.collide((MainShip) e);
@@ -337,7 +347,7 @@ public class GameScreen implements Screen, ScreenInterface {
         }
         arrow.setRotation(degrees);
     }
-
+    
     private void createBullet(float rotation, Ship ship) {
         Bullet bullet = new Bullet(new Texture("bullet1.png"));
         bullet.setBounds(ship.getX(), ship.getY(), 10, 10);
@@ -395,6 +405,7 @@ public class GameScreen implements Screen, ScreenInterface {
 
     @Override
     public void dispose() {
-        ship.dispose();
+        red_ship.dispose();
+        blue_ship.dispose();
     }
 }

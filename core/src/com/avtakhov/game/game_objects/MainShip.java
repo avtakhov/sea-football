@@ -2,11 +2,11 @@ package com.avtakhov.game.game_objects;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class MainShip extends Ship {
 
     OrthographicCamera camera;
+    private String text = "";
 
     public MainShip(Texture img, OrthographicCamera camera) {
         super(img);
@@ -24,4 +24,11 @@ public class MainShip extends Ship {
         camera.position.y = y;
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }
