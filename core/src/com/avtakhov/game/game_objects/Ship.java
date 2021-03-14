@@ -7,7 +7,7 @@ public abstract class Ship extends RenderObject {
     private float x;
     private float y;
     private float rotation;
-    private final float SPEED = 1.5f;
+    protected float SPEED = 1.5f;
 
     public Ship(Texture img) {
         super(new Sprite(img));
