@@ -56,6 +56,14 @@ public class Ball extends RenderObject {
         return z;
     }
 
+    public float getSpeedZ() {
+        return speedZ;
+    }
+
+    public void setSpeedZ(float speedZ) {
+        this.speedZ = speedZ;
+    }
+
     public void setZ(float z) {
         this.z = z;
     }

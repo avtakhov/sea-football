@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class GameScreen implements Screen, ScreenInterface {
-    private final float UPDATE_TIME = 1 / 60f;
+    private final float UPDATE_TIME = 1 / 30f;
     float timer = 0;
 
     private Stage stage;
@@ -81,7 +81,7 @@ public class GameScreen implements Screen, ScreenInterface {
 
     public void connectSocket() {
         try {
-            socket = IO.socket("http://localhost:8080");
+            socket = IO.socket("http://467559-cs85334.tmweb.ru:8080");
             socket.connect();
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,7 +108,8 @@ public class GameScreen implements Screen, ScreenInterface {
 
     public void updateServer(float dt) {
         timer += dt;
-        if (main != null) {
+        if (main != null && timer > UPDATE_TIME) {
+            timer = 0;
             JSONObject data = new JSONObject();
             try {
                 data.put("x", main.getX());
@@ -127,6 +128,9 @@ public class GameScreen implements Screen, ScreenInterface {
                 data.put("ballX", ball.getX());
                 data.put("ballY", ball.getY());
                 data.put("ballZ", ball.getZ());
+                data.put("ballSpeedX", ball.getSpeedX());
+                data.put("ballSpeedY", ball.getSpeedY());
+                data.put("ballSpeedZ", ball.getSpeedZ());
                 data.put("scoreLeft", scoreBoard.getLEFT_SCORE());
                 data.put("scoreRight", scoreBoard.getRIGHT_SCORE());
                 socket.emit("playerMoved", data);
@@ -178,6 +182,9 @@ public class GameScreen implements Screen, ScreenInterface {
                 double ballX = data.getDouble("ballX");
                 double ballY = data.getDouble("ballY");
                 double ballZ = data.getDouble("ballZ");
+                double ballSpeedX = data.getDouble("ballSpeedX");
+                double ballSpeedY = data.getDouble("ballSpeedY");
+                double ballSpeedZ = data.getDouble("ballSpeedZ");
                 double rot = data.getDouble("rot");
                 int ls = data.getInt("scoreLeft");
                 int rs = data.getInt("scoreRight");
@@ -187,6 +194,9 @@ public class GameScreen implements Screen, ScreenInterface {
                     objects.get(id).setPosition((float) x, (float) y);
                     objects.get(id).setRotation((float) rot);
                 }
+                ball.setSpeedX((float) ballSpeedX);
+                ball.setSpeedY((float) ballSpeedY);
+                ball.setSpeedZ((float) ballSpeedZ);
                 ball.setPosition((float) ballX, (float) ballY);
                 ball.setZ((float) ballZ);
             } catch (JSONException ignored) {
