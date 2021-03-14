@@ -41,7 +41,7 @@ public class Menu implements Screen, ScreenInterface {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (x >= 255 && x <= 350 && y >= 29 && y <= 98) {
-                    aGame.setScreen(new GameType(aGame));
+                    aGame.setScreen(new GameScreen(aGame));
                 }
                 if (x >= 542 && x <= 640 && y >= 402 && y <= 480) {
                     if (isMusic) {

@@ -8,10 +8,14 @@ public class Bullet extends RenderObject {
     protected int MAX_DISTANCE;
     private float currentDistance;
     public boolean toDelete;
+    private float z;
+    private float speedZ;
 
     public Bullet(Texture img) {
         super(new Sprite(img));
         toDelete = false;
+        z = 0;
+        speedZ = 0;
         currentDistance = 0;
         MAX_DISTANCE = 400;
     }
@@ -26,12 +30,36 @@ public class Bullet extends RenderObject {
         float moveY = SPEED * (float) Math.sin(Math.toRadians(getRotation()));
         speedX = moveX;
         speedY = moveY;
+        img.setScale(1 + z / 10);
+        z += speedZ;
+        if (z > 0) {
+            speedZ -= 0.05f;
+        } else {
+            speedZ = 0;
+            z = 0;
+        }
         setX(getX() + moveX);
         setY(getY() + moveY);
         currentDistance += (Math.abs(moveX) + Math.abs(moveY));
         if (currentDistance >= MAX_DISTANCE) {
             toDelete = true;
         }
+    }
+
+    public float getZ() {
+        return z;
+    }
+
+    public void setZ(float z) {
+        this.z = z;
+    }
+
+    public float getSpeedZ() {
+        return speedZ;
+    }
+
+    public void setSpeedZ(float speedZ) {
+        this.speedZ = speedZ;
     }
 
     public boolean isToDelete() {

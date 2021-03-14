@@ -31,6 +31,7 @@ public class GameScreen implements Screen, ScreenInterface {
     Texture blue_ship;
     Texture red_ship;
     Texture main_shadow1;
+    private Goal goalA;
     MainShip main;
     private String uid = "";
     RenderObject back;
@@ -61,6 +62,7 @@ public class GameScreen implements Screen, ScreenInterface {
         stage.addActor(backBack);
         stage.addActor(back);
         stage.addActor(main);
+        goalA = new Goal(new Texture("goal.png"));
         gateLeft = new Gate(new Texture("gate.png"));
         gateRight = new Gate(new Texture("gate.png"));
         gateLeft.setBounds(24, back.getHeight() / 2, 48, 270);
@@ -93,7 +95,7 @@ public class GameScreen implements Screen, ScreenInterface {
 
     public void connectSocket() {
         try {
-            socket = IO.socket( "http://467559-cs85334.tmweb.ru:8080");
+            socket = IO.socket("http://467559-cs85334.tmweb.ru:8080");
             socket.connect();
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,6 +131,8 @@ public class GameScreen implements Screen, ScreenInterface {
                 data.put("rot", main.getRotation());
                 int goal = goal();
                 if (goal != 0) {
+                    goalA.setBounds(main.getX(), main.getY(), 600, 600);
+                    stage.addActor(goalA);
                     setStartPosition();
                     if (goal == 1) {
                         scoreBoard.setLEFT_SCORE(scoreBoard.getLEFT_SCORE() + 1);
@@ -291,6 +295,12 @@ public class GameScreen implements Screen, ScreenInterface {
                     e.remove();
                 }
             }
+            if (e instanceof Goal) {
+                if (((Goal) e).toDestroy()) {
+                    ((Goal) e).setCounter(0);
+                    e.remove();
+                }
+            }
             if (e instanceof MainShip) {
                 ball.collide((MainShip) e);
                 checkBounds(ball);
@@ -324,7 +334,7 @@ public class GameScreen implements Screen, ScreenInterface {
         }
     }
 
-   private void moveBotShip() {
+    private void moveBotShip() {
         //checkBounds(bot);
 
         //System.out.println(((ball.getX() - bot.getX()) * bot.getSpeedX() + (ball.getY() - bot.getY()) * bot.getSpeedY()));
@@ -355,11 +365,12 @@ public class GameScreen implements Screen, ScreenInterface {
         }
         arrow.setRotation(degrees);
     }
-    
+
     private void createBullet(float rotation, Ship ship) {
         Bullet bullet = new Bullet(new Texture("bullet1.png"));
         bullet.setBounds(ship.getX(), ship.getY(), 10, 10);
         bullet.setRotation(ship.getRotation() + rotation);
+        bullet.setSpeedZ(0.5f);
         stage.addActor(bullet);
     }
 
