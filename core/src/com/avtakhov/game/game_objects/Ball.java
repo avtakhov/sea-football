@@ -7,7 +7,9 @@ public class Ball extends RenderObject {
     private float z;
     private float speedZ;
     private int rotDir;
+    public String uid = "";
     private boolean isTouched;
+
     public Ball(Texture texture) {
         super(texture);
         z = 0;

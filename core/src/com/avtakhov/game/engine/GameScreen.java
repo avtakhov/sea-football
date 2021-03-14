@@ -30,6 +30,7 @@ public class GameScreen implements Screen, ScreenInterface {
     private Socket socket;
     Texture ship;
     MainShip main;
+    private String uid = "";
     RenderObject back;
     Ball ball;
     RenderObject arrow;
@@ -127,12 +128,17 @@ public class GameScreen implements Screen, ScreenInterface {
                 }
                 data.put("scoreLeft", scoreBoard.getLEFT_SCORE());
                 data.put("scoreRight", scoreBoard.getRIGHT_SCORE());
-                data.put("ball", ball.getX() + " " + ball.getY() + " " + ball.getZ() + " " + ball.getSpeedX()
-                        + " " + ball.getSpeedY() + " " + ball.getSpeedZ());
+                data.put("ballId", "");
                 if (ball.isTouched()) {
-                    data.put("last", 0);
+                    ball.uid = uid;
+                    data.put("ballId", uid);
+                    ball.setTouched(false);
+                }
+                if (ball.uid.equals(uid)) {
+                    data.put("ball", ball.getX() + " " + ball.getY() + " " + ball.getZ() + " " + ball.getSpeedX()
+                            + " " + ball.getSpeedY() + " " + ball.getSpeedZ());
                 } else {
-                    data.put("last", 1);
+                    data.put("ball", "");
                 }
                 socket.emit("playerMoved", data);
             } catch (JSONException e) {
@@ -148,6 +154,7 @@ public class GameScreen implements Screen, ScreenInterface {
             JSONObject data = (JSONObject) args[0];
             try {
                 String id = data.getString("id");
+                uid = id;
                 Gdx.app.log("SocketIO", "My ID: " + id);
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting ID");
@@ -183,8 +190,17 @@ public class GameScreen implements Screen, ScreenInterface {
                 double rot = data.getDouble("rot");
                 int ls = data.getInt("scoreLeft");
                 int rs = data.getInt("scoreRight");
-                scoreBoard.setLEFT_SCORE(ls);
-                scoreBoard.setRIGHT_SCORE(rs);
+                if (scoreBoard.getLEFT_SCORE() < ls) {
+                    scoreBoard.setLEFT_SCORE(ls);
+                }
+                if (scoreBoard.getRIGHT_SCORE() < rs) {
+                    scoreBoard.setRIGHT_SCORE(rs);
+                }
+                String bId = data.getString("ballId");
+                if (bId.length() > 0) {
+                    ball.uid = bId;
+                    System.out.println(ball.uid + " " + uid);
+                }
                 String bl = data.getString("ball");
                 if (bl.length() > 0) {
                     String[] values = bl.split(" ");
