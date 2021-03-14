@@ -19,7 +19,7 @@ io.on('connection', function (socket) {
                 players[i].x = data.x;
                 players[i].y = data.y;
                 players[i].rot = data.rot;
-                players[i].color = data.color;
+                //players[i].color = data.color;
             }
         }
     });
@@ -32,14 +32,13 @@ io.on('connection', function (socket) {
             }
         }
     });
-    players.push(new player(socket.id, 0, 0, 0, 0));
+    players.push(new player(socket.id, 0, 0, 0));
 });
 
 
-function player(id, x, y, rot, color) {
+function player(id, x, y, rot) {
     this.id = id;
     this.x = x;
     this.y = y;
     this.rot = rot;
-    this.color = color;
 }

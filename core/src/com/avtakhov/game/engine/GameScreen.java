@@ -35,7 +35,6 @@ public class GameScreen implements Screen, ScreenInterface {
     MainShip main;
     private String uid = "";
     RenderObject back;
-    private int color;
     Ball ball;
     RenderObject arrow;
     HashMap<String, RenderObject> objects;
@@ -204,7 +203,6 @@ public class GameScreen implements Screen, ScreenInterface {
                 double x = data.getDouble("x");
                 double y = data.getDouble("y");
                 double rot = data.getDouble("rot");
-                int color = data.getInt("color");
                 int ls = data.getInt("scoreLeft");
                 int rs = data.getInt("scoreRight");
                 if (scoreBoard.getLEFT_SCORE() < ls) {
@@ -238,8 +236,7 @@ public class GameScreen implements Screen, ScreenInterface {
             JSONArray objects1 = (JSONArray) args[0];
             try {
                 for (int i = 0; i < objects1.length(); i++) {
-                    int color = objects1.getJSONObject(i).getInt("color");
-                    RenderObject coopPlayer = new RenderObject(color == 0 ? blue_ship : red_ship);
+                    RenderObject coopPlayer = new RenderObject(Math.random() >= 0.5 ? blue_ship : red_ship);
                     Vector2 position = new Vector2();
                     position.x = ((Double) objects1.getJSONObject(i).getDouble("x")).floatValue();
                     position.y = ((Double) objects1.getJSONObject(i).getDouble("y")).floatValue();
