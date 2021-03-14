@@ -25,7 +25,8 @@ public class Menu implements Screen, ScreenInterface {
     private static boolean isMusic = true;
     long idMusic;
     public Menu(Game aGame) {
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("fontmusic.mp3"));
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("ostrov_sokrovishc_02.mp3"));
+        sound.loop();
         idMusic = sound.play(1.0f); // play new sound and keep handle for further manipulation
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 2000, 1252);
@@ -33,8 +34,10 @@ public class Menu implements Screen, ScreenInterface {
         back = new RenderObject(new Texture("menu.jpg"));
         back.setBounds(1000, 626, 2000, 1252);
         stage.addActor(back);
-        playButton = createButton(stage, "button.png", back.getWidth() / 3, back.getHeight() / 20, 450, 200);
-        musicButton = createButton(stage, "music.jpg", back.getWidth() - 300, back.getHeight() - 200, 300, 200);
+        playButton = createButton(stage, "button.png", back.getWidth() / 3,
+                                                back.getHeight() / 20, 450, 200);
+        musicButton = createButton(stage, "music.jpg", back.getWidth() - 300,
+                                                back.getHeight() - 200, 300, 200);
         stage.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
