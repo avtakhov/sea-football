@@ -64,7 +64,7 @@ public class GameScreen implements Screen, ScreenInterface {
         stage.addActor(main);
         goalA = new Goal(new Texture("goal.png"));
         gateLeft = new Gate(new Texture("gate.png"));
-        gateRight = new Gate(new Texture("gate.png"));
+        gateRight = new Gate(new Texture("gate1.png"));
         gateLeft.setBounds(24, back.getHeight() / 2, 48, 270);
         gateRight.setBounds(back.getWidth() - 24, back.getHeight() / 2, 48, 270);
         arrow = new RenderObject(new Texture("arrow.png"));
@@ -79,15 +79,15 @@ public class GameScreen implements Screen, ScreenInterface {
         bot = new BotShip(new Texture("main.png"), ball);
         bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
         stage.addActor(bot);
-        Button homeButton = createButton(stage, "button.png", 0,
-                back.getHeight() - 200, 450, 200);
+       // Button homeButton = createButton(stage, "button.png", 0,
+       //         back.getHeight() - 200, 450, 200);
         arrow.setBounds(main.getX(), main.getY(), 32, 32);
         stage.addActor(gateLeft);
         stage.addActor(gateRight);
         stage.addActor(arrow);
         stage.addActor(ball);
         stage.addActor(scoreBoard);
-        stage.addActor(homeButton);
+     //   stage.addActor(homeButton);
         objects = new HashMap<>();
         connectSocket();
         configSocketEvents();
