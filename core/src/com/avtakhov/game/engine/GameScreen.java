@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class GameScreen implements Screen, ScreenInterface {
-    private final float UPDATE_TIME = 1 / 30f;
+    private final float UPDATE_TIME = 1 / 20f;
     float timer = 0;
 
     private Stage stage;
@@ -106,24 +106,6 @@ public class GameScreen implements Screen, ScreenInterface {
         ball.setZ(0);
     }
 
-    public void updateServer2() {
-        if (ball.isTouched()) {
-            JSONObject data = new JSONObject();
-            try {
-                ball.setTouched(false);
-                data.put("ballX", ball.getX());
-                data.put("ballY", ball.getY());
-                data.put("ballZ", ball.getZ());
-                data.put("ballSX", ball.getSpeedX());
-                data.put("ballSY", ball.getSpeedY());
-                data.put("ballSZ", ball.getSpeedZ());
-                socket.emit("ballMoved", data);
-            } catch (JSONException e) {
-                Gdx.app.log("SOCKET.IO", "Error");
-            }
-        }
-    }
-
     public void updateServer(float dt) {
         timer += dt;
         if (main != null && timer > UPDATE_TIME) {
@@ -145,12 +127,12 @@ public class GameScreen implements Screen, ScreenInterface {
                 }
                 data.put("scoreLeft", scoreBoard.getLEFT_SCORE());
                 data.put("scoreRight", scoreBoard.getRIGHT_SCORE());
+                data.put("ball", ball.getX() + " " + ball.getY() + " " + ball.getZ() + " " + ball.getSpeedX()
+                        + " " + ball.getSpeedY() + " " + ball.getSpeedZ());
                 if (ball.isTouched()) {
-                    data.put("ball", ball.getX() + " " + ball.getY() + " " + ball.getZ() + " " + ball.getSpeedX()
-                            + " " + ball.getSpeedY() + " " + ball.getSpeedZ());
-                    ball.setTouched(false);
+                    data.put("last", 0);
                 } else {
-                    data.put("ball", "");
+                    data.put("last", 1);
                 }
                 socket.emit("playerMoved", data);
             } catch (JSONException e) {
@@ -286,7 +268,6 @@ public class GameScreen implements Screen, ScreenInterface {
         //    renderObject.getValue().act(Gdx.graphics.getDeltaTime());
         //}
         updateServer(Gdx.graphics.getDeltaTime());
-        updateServer2();
         moveArrow();
         moveShip();
         //moveBotShip();
