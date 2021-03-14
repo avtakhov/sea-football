@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 public class MainShip extends Ship {
 
     OrthographicCamera camera;
-    private final static float SPEED = 1.5f;
 
     public MainShip(Texture img, OrthographicCamera camera) {
         super(img);

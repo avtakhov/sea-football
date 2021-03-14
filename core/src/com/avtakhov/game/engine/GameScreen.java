@@ -19,7 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-
 import java.util.Random;
 
 public class GameScreen implements Screen, ScreenInterface {
@@ -35,7 +34,9 @@ public class GameScreen implements Screen, ScreenInterface {
     Ball ball;
     RenderObject arrow;
     HashMap<String, RenderObject> objects;
-    BotShip bot;
+    //BotShip bot;
+    Gate gateLeft;
+    Gate gateRight;
     Random random;
 
     public GameScreen(Game aGame) {
@@ -53,14 +54,20 @@ public class GameScreen implements Screen, ScreenInterface {
         stage.addActor(backBack);
         stage.addActor(back);
         stage.addActor(main);
+        gateLeft = new Gate(new Texture("gate.png"));
+        gateRight = new Gate(new Texture("gate.png"));
+        gateLeft.setBounds(24, back.getHeight() / 2, 48, 270);
+        gateRight.setBounds(back.getWidth() - 24, back.getHeight() / 2, 48, 270);
         arrow = new RenderObject(new Texture("arrow.png"));
         ball = new Ball(new Texture("ball.png"));
         ball.setBounds(1000, 626, 40, 40);
         ball.setPosition(ball.getX(), ball.getY());
-        bot = new BotShip(new Texture("main.png"), ball);
-        bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
-        stage.addActor(bot);
+        //bot = new BotShip(new Texture("main.png"), ball);
+        // bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
+        //stage.addActor(bot);
         arrow.setBounds(main.getX(), main.getY(), 32, 32);
+        stage.addActor(gateLeft);
+        stage.addActor(gateRight);
         stage.addActor(arrow);
         stage.addActor(ball);
         objects = new HashMap<>();
@@ -77,6 +84,16 @@ public class GameScreen implements Screen, ScreenInterface {
         }
     }
 
+    private int goal() {
+        if (gateLeft.isGoal(ball)) {
+            return -1;
+        }
+        if (gateRight.isGoal(ball)) {
+            return 1;
+        }
+        return 0;
+    }
+
     public void updateServer(float dt) {
         timer += dt;
         if (main != null) {
@@ -85,6 +102,13 @@ public class GameScreen implements Screen, ScreenInterface {
                 data.put("x", main.getX());
                 data.put("y", main.getY());
                 data.put("rot", main.getRotation());
+                data.put("ballX", ball.getX());
+                data.put("ballY", ball.getY());
+                data.put("ballZ", ball.getZ());
+                int goal = goal();
+                if (goal != 0) {
+                    data.put("goal", goal);
+                }
                 socket.emit("playerMoved", data);
             } catch (JSONException e) {
                 Gdx.app.log("SOCKET.IO", "Error");
@@ -113,8 +137,6 @@ public class GameScreen implements Screen, ScreenInterface {
                 news.setBounds(100, 100, 128, 40);
                 objects.put(id, news);
                 stage.addActor(news);
-                //objects.put(id, news);
-                //friendlyPlayers.put(id, new Starship(friendlyShip));
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting New PlayerID");
             }
@@ -133,24 +155,27 @@ public class GameScreen implements Screen, ScreenInterface {
                 String id = data.getString("id");
                 double x = data.getDouble("x");
                 double y = data.getDouble("y");
+                double ballX = data.getDouble("ballX");
+                double ballY = data.getDouble("ballY");
+                double ballZ = data.getDouble("ballZ");
                 double rot = data.getDouble("rot");
                 if (objects.get(id) != null) {
                     objects.get(id).setPosition((float) x, (float) y);
                     objects.get(id).setRotation((float) rot);
                 }
+                ball.setPosition((float) ballX, (float) ballY);
+                ball.setZ((float) ballZ);
             } catch (JSONException ignored) {
             }
         }).on("getPlayers", args -> {
             JSONArray objects1 = (JSONArray) args[0];
             try {
                 for (int i = 0; i < objects1.length(); i++) {
-                    //  Starship coopPlayer = new Starship(friendlyShip);
                     RenderObject coopPlayer = new RenderObject(ship);
                     Vector2 position = new Vector2();
                     position.x = ((Double) objects1.getJSONObject(i).getDouble("x")).floatValue();
                     position.y = ((Double) objects1.getJSONObject(i).getDouble("y")).floatValue();
                     coopPlayer.setBounds(position.x, position.y, 128, 40);
-                    // objects.put(objects.getJSONObject(i).getString("id"), coopPlayer);
                     objects.put(objects1.getJSONObject(i).getString("id"), coopPlayer);
                     stage.addActor(coopPlayer);
                 }
@@ -211,7 +236,7 @@ public class GameScreen implements Screen, ScreenInterface {
         updateServer(Gdx.graphics.getDeltaTime());
         moveArrow();
         moveShip();
-        moveBotShip();
+        //moveBotShip();
     }
 
     private void moveShip() {
@@ -233,7 +258,7 @@ public class GameScreen implements Screen, ScreenInterface {
         }
     }
 
-    private void moveBotShip() {
+   /*private void moveBotShip() {
         //checkBounds(bot);
         if (random.nextInt() % 27 == 0) {
             createBullet(90, bot);
@@ -242,12 +267,12 @@ public class GameScreen implements Screen, ScreenInterface {
         //System.out.println(((ball.getX() - bot.getX()) * bot.getSpeedX() + (ball.getY() - bot.getY()) * bot.getSpeedY()));
         // TODO Math update
         if (((ball.getX() - bot.getX()) * bot.getSpeedX() + (ball.getY() - bot.getY()) * bot.getSpeedY()) < 0 || bot.getLastX() == bot.getX() &&
-                                                                                                                    bot.getLastY() == bot.getY()) {
+                bot.getLastY() == bot.getY()) {
             bot.rotateBy(10);
         }
         bot.setLastX(bot.getX());
         bot.setLastY(bot.getY());
-    }
+    }*/
 
 
     private void moveArrow() {
