@@ -106,6 +106,24 @@ public class GameScreen implements Screen, ScreenInterface {
         ball.setZ(0);
     }
 
+    public void updateServer2() {
+        if (ball.isTouched()) {
+            JSONObject data = new JSONObject();
+            try {
+                ball.setTouched(false);
+                data.put("ballX", ball.getX());
+                data.put("ballY", ball.getY());
+                data.put("ballZ", ball.getZ());
+                data.put("ballSX", ball.getSpeedX());
+                data.put("ballSY", ball.getSpeedY());
+                data.put("ballSZ", ball.getSpeedZ());
+                socket.emit("ballMoved", data);
+            } catch (JSONException e) {
+                Gdx.app.log("SOCKET.IO", "Error");
+            }
+        }
+    }
+
     public void updateServer(float dt) {
         timer += dt;
         if (main != null && timer > UPDATE_TIME) {
@@ -125,14 +143,15 @@ public class GameScreen implements Screen, ScreenInterface {
                         scoreBoard.setRIGHT_SCORE(scoreBoard.getRIGHT_SCORE() + 1);
                     }
                 }
-                data.put("ballX", ball.getX());
-                data.put("ballY", ball.getY());
-                data.put("ballZ", ball.getZ());
-                data.put("ballSpeedX", ball.getSpeedX());
-                data.put("ballSpeedY", ball.getSpeedY());
-                data.put("ballSpeedZ", ball.getSpeedZ());
                 data.put("scoreLeft", scoreBoard.getLEFT_SCORE());
                 data.put("scoreRight", scoreBoard.getRIGHT_SCORE());
+                if (ball.isTouched()) {
+                    data.put("ball", ball.getX() + " " + ball.getY() + " " + ball.getZ() + " " + ball.getSpeedX()
+                            + " " + ball.getSpeedY() + " " + ball.getSpeedZ());
+                    ball.setTouched(false);
+                } else {
+                    data.put("ball", "");
+                }
                 socket.emit("playerMoved", data);
             } catch (JSONException e) {
                 Gdx.app.log("SOCKET.IO", "Error");
@@ -146,7 +165,6 @@ public class GameScreen implements Screen, ScreenInterface {
         }).on("socketID", args -> {
             JSONObject data = (JSONObject) args[0];
             try {
-
                 String id = data.getString("id");
                 Gdx.app.log("SocketIO", "My ID: " + id);
             } catch (JSONException e) {
@@ -175,30 +193,30 @@ public class GameScreen implements Screen, ScreenInterface {
             }
         }).on("playerMoved", args -> {
             JSONObject data = (JSONObject) args[0];
+
             try {
                 String id = data.getString("id");
                 double x = data.getDouble("x");
                 double y = data.getDouble("y");
-                double ballX = data.getDouble("ballX");
-                double ballY = data.getDouble("ballY");
-                double ballZ = data.getDouble("ballZ");
-                double ballSpeedX = data.getDouble("ballSpeedX");
-                double ballSpeedY = data.getDouble("ballSpeedY");
-                double ballSpeedZ = data.getDouble("ballSpeedZ");
                 double rot = data.getDouble("rot");
                 int ls = data.getInt("scoreLeft");
                 int rs = data.getInt("scoreRight");
                 scoreBoard.setLEFT_SCORE(ls);
                 scoreBoard.setRIGHT_SCORE(rs);
+                String bl = data.getString("ball");
+                if (bl.length() > 0) {
+                    String[] values = bl.split(" ");
+                    ball.setX(Float.parseFloat(values[0]));
+                    ball.setY(Float.parseFloat(values[1]));
+                    ball.setZ(Float.parseFloat(values[2]));
+                    ball.setSpeedX(Float.parseFloat(values[3]));
+                    ball.setSpeedY(Float.parseFloat(values[4]));
+                    ball.setSpeedZ(Float.parseFloat(values[5]));
+                }
                 if (objects.get(id) != null) {
                     objects.get(id).setPosition((float) x, (float) y);
                     objects.get(id).setRotation((float) rot);
                 }
-                ball.setSpeedX((float) ballSpeedX);
-                ball.setSpeedY((float) ballSpeedY);
-                ball.setSpeedZ((float) ballSpeedZ);
-                ball.setPosition((float) ballX, (float) ballY);
-                ball.setZ((float) ballZ);
             } catch (JSONException ignored) {
             }
         }).on("getPlayers", args -> {
@@ -268,6 +286,7 @@ public class GameScreen implements Screen, ScreenInterface {
         //    renderObject.getValue().act(Gdx.graphics.getDeltaTime());
         //}
         updateServer(Gdx.graphics.getDeltaTime());
+        updateServer2();
         moveArrow();
         moveShip();
         //moveBotShip();

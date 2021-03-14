@@ -7,7 +7,7 @@ public class Ball extends RenderObject {
     private float z;
     private float speedZ;
     private int rotDir;
-
+    private boolean isTouched;
     public Ball(Texture texture) {
         super(texture);
         z = 0;
@@ -29,6 +29,7 @@ public class Ball extends RenderObject {
                 this.speedY += speedY / 2;
                 bullet.toDelete = true;
                 this.speedZ = 0.5f;
+                isTouched = true;
             }
         }
     }
@@ -48,7 +49,7 @@ public class Ball extends RenderObject {
                 rotDir = (int) (Math.random() * 3) - 1;
                 this.speedZ = (Math.abs(speedX) + Math.abs(speedY)) / 3;
             }
-
+            isTouched = true;
         }
     }
 
@@ -66,6 +67,14 @@ public class Ball extends RenderObject {
 
     public void setZ(float z) {
         this.z = z;
+    }
+
+    public boolean isTouched() {
+        return isTouched;
+    }
+
+    public void setTouched(boolean touched) {
+        isTouched = touched;
     }
 
     @Override
