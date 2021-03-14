@@ -20,16 +20,19 @@ public class GameType implements Screen, ScreenInterface {
     RenderObject back;
     private static boolean isMusic = true;
     long idMusic;
+    Button singleGame;
+    Button multiPlayerGame;
     public GameType(Game aGame) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 2000, 1252);
         stage = new Stage();
+        this.stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         back = new RenderObject(new Texture("menunew.png"));
         back.setBounds(1000, 626, 2000, 1252);
         stage.addActor(back);
-        Button singleGame = createButton(stage, "single.png", back.getWidth() / 3 + 100,
+        singleGame = createButton(stage, "single.png", back.getWidth() / 3 + 100,
                 back.getHeight() / 3, 450, 200);
-        Button multiPlayerGame = createButton(stage, "multi.png", back.getWidth() / 3 + 100,
+        multiPlayerGame = createButton(stage, "multi.png", back.getWidth() / 3 + 100,
                 back.getHeight() / 8, 450, 200);
         stage.addListener(new ClickListener(){
             @Override
@@ -39,6 +42,12 @@ public class GameType implements Screen, ScreenInterface {
                     aGame.setScreen(new GameScreen(aGame, true));
                 }
                 if (x >= 245 && x <= 390 && y >= 60 && y <= 136) {
+                    aGame.setScreen(new GameScreen(aGame, false));
+                }
+                if (x >= 740 && x <= 1170 && y >= 335 && y <= 495) {
+                    aGame.setScreen(new GameScreen(aGame, true));
+                }
+                if (x >= 740 && x <= 1170 && y >= 127 && y <= 280) {
                     aGame.setScreen(new GameScreen(aGame, false));
                 }
             }
@@ -52,6 +61,7 @@ public class GameType implements Screen, ScreenInterface {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
+        this.stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         Batch batch = stage.getBatch();
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
@@ -64,10 +74,10 @@ public class GameType implements Screen, ScreenInterface {
 
     }
 
-
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        this.stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        System.out.println(1);
     }
 
     @Override

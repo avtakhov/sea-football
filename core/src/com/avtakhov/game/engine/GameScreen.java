@@ -44,8 +44,10 @@ public class GameScreen implements Screen, ScreenInterface {
     ScoreBoard scoreBoard;
     Random random;
     boolean needBot;
+    Game aGame;
 
     public GameScreen(Game aGame, boolean needBot) {
+        this.aGame = aGame;
         this.needBot = needBot;
         random = new Random();
         camera = new OrthographicCamera();
@@ -308,6 +310,10 @@ public class GameScreen implements Screen, ScreenInterface {
         //for (Map.Entry<String, RenderObject> renderObject : objects.entrySet()) {
         //    renderObject.getValue().act(Gdx.graphics.getDeltaTime());
         //}
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            aGame.setScreen(new Menu(aGame));
+            return;
+        }
         updateServer(Gdx.graphics.getDeltaTime());
         moveArrow();
         moveShip();
