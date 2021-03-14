@@ -35,7 +35,7 @@ public class GameScreen implements Screen, ScreenInterface {
     Ball ball;
     RenderObject arrow;
     HashMap<String, RenderObject> objects;
-    //BotShip bot;
+    BotShip bot;
     Gate gateLeft;
     Gate gateRight;
     ScoreBoard scoreBoard;
@@ -66,15 +66,18 @@ public class GameScreen implements Screen, ScreenInterface {
         scoreBoard.setBounds(back.getWidth() / 2, back.getHeight() + 100, 600, 90);
         ball.setBounds(1000, 626, 40, 40);
         ball.setPosition(ball.getX(), ball.getY());
-        //bot = new BotShip(new Texture("main.png"), ball);
-        // bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
-        //stage.addActor(bot);
+        bot = new BotShip(new Texture("main.png"), ball);
+        bot.setBounds(camera.position.x - 50, camera.position.y - 50, 128, 40);
+        stage.addActor(bot);
+        Button homeButton = createButton(stage, "button.png", 0,
+                back.getHeight() - 200, 450, 200);
         arrow.setBounds(main.getX(), main.getY(), 32, 32);
         stage.addActor(gateLeft);
         stage.addActor(gateRight);
         stage.addActor(arrow);
         stage.addActor(ball);
         stage.addActor(scoreBoard);
+        stage.addActor(homeButton);
         objects = new HashMap<>();
         connectSocket();
         configSocketEvents();
@@ -82,7 +85,7 @@ public class GameScreen implements Screen, ScreenInterface {
 
     public void connectSocket() {
         try {
-            socket = IO.socket("http://467559-cs85334.tmweb.ru:8080");
+            socket = IO.socket( "http://467559-cs85334.tmweb.ru:8080");
             socket.connect();
         } catch (Exception e) {
             e.printStackTrace();
@@ -286,7 +289,7 @@ public class GameScreen implements Screen, ScreenInterface {
         updateServer(Gdx.graphics.getDeltaTime());
         moveArrow();
         moveShip();
-        //moveBotShip();
+        moveBotShip();
     }
 
     private void moveShip() {
@@ -308,21 +311,23 @@ public class GameScreen implements Screen, ScreenInterface {
         }
     }
 
-   /*private void moveBotShip() {
+   private void moveBotShip() {
         //checkBounds(bot);
-        if (random.nextInt() % 27 == 0) {
-            createBullet(90, bot);
-            createBullet(-90, bot);
-        }
+
         //System.out.println(((ball.getX() - bot.getX()) * bot.getSpeedX() + (ball.getY() - bot.getY()) * bot.getSpeedY()));
         // TODO Math update
         if (((ball.getX() - bot.getX()) * bot.getSpeedX() + (ball.getY() - bot.getY()) * bot.getSpeedY()) < 0 || bot.getLastX() == bot.getX() &&
                 bot.getLastY() == bot.getY()) {
             bot.rotateBy(10);
+        } else {
+            if (random.nextInt() % 27 == 0) {
+                createBullet(90, bot);
+                createBullet(-90, bot);
+            }
         }
         bot.setLastX(bot.getX());
         bot.setLastY(bot.getY());
-    }*/
+    }
 
 
     private void moveArrow() {

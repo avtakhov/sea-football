@@ -18,26 +18,26 @@ public class GameType implements Screen, ScreenInterface {
     private Stage stage;
     private OrthographicCamera camera;
     RenderObject back;
-    Button playButton;
-    Button musicButton;
     private static boolean isMusic = true;
     long idMusic;
     public GameType(Game aGame) {
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("ostrov_sokrovishc_02.mp3"));
+        idMusic = sound.play(1.0f); // play new sound and keep handle for further manipulation
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 2000, 1252);
         stage = new Stage();
-        back = new RenderObject(new Texture("menu.jpg"));
-        back.setBounds(0, 0, 2000, 1252);
+        back = new RenderObject(new Texture("menunew.png"));
+        back.setBounds(1000, 626, 2000, 1252);
         stage.addActor(back);
-        playButton = createButton(stage, "button.png", back.getWidth() / 3,
-                back.getHeight() / 20, 450, 200);
-        musicButton = createButton(stage, "music.jpg", back.getWidth() - 300,
-                back.getHeight() - 200, 300, 200);
+        Button singleGame = createButton(stage, "button.png", back.getWidth() / 3,
+                back.getHeight() / 5, 450, 200);
+        Button multiPlayerGame = createButton(stage, "button.png", back.getWidth() / 3,
+                back.getHeight() / 2, 450, 200);
         stage.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println(x + " " + y);
-                if (x >= 255 && x <= 350 && y >= 29 && y <= 98) {
+                if (x >= 211 && x <= 355 && y >= 241 && y <= 316) {
                     aGame.setScreen(new GameScreen(aGame));
                 }
             }
