@@ -14,7 +14,7 @@ Multiplayer - Сall your friends and have fun together!<br>
 
 ## Controls
 
-A, D - use for left and right turn<br>
+A, D - left and right turn<br>
 W - Speed up<br>
 Right and left mouse clicks - Fire<br> 
 
