@@ -2,6 +2,10 @@
 
 ![image](https://user-images.githubusercontent.com/57333967/111348397-f993c600-86a1-11eb-8ba6-5a1a7eca55a5.png)
 
+## Winners
+I place
+![image](https://user-images.githubusercontent.com/57333967/220174164-1decec3c-9744-441e-af50-1d86d7a0ec4b.png)
+
 
 ## Script:
 After Captain Flint's map was lost, the pirates went into despair.<br>
